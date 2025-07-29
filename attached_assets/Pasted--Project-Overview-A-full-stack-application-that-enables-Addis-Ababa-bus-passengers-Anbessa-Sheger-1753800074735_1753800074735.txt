@@ -1,0 +1,196 @@
+. Project Overview
+A full-stack application that enables Addis Ababa bus passengers (Anbessa, Sheger, etc.) to:
+
+Track buses live on a map.
+
+Get estimated arrival times.
+
+Buy digital tickets using mobile money and card payments.
+
+Receive QR code e-tickets for boarding.
+
+Admins manage buses, routes, drivers, and payments via a dashboard.
+
+Multilingual support: Amharic, English, Afaan Oromo.
+
+2. Project Goals
+Minimize passenger waiting times through real-time info.
+
+Replace cash payments with secure digital transactions.
+
+Provide administrative tools for efficient fleet and revenue management.
+
+Cater to diverse users by supporting local languages.
+
+Ensure accessibility even in low bandwidth or offline conditions.
+
+3. System Architecture
+Component	Purpose
+Passenger Frontend	React.js web/mobile app for user interaction
+Admin Dashboard	React.js web app for managing system
+Backend API	Node.js + Express for business logic & data
+Database	MongoDB for data persistence
+Real-time Service	Socket.IO/WebSocket for live bus location
+Payment Gateway	Telebirr, CBE Birr APIs + Stripe for payments
+Map Service	Mapbox or Leaflet.js for maps and geolocation
+Localization	i18next (React) for multilingual UI
+
+4. Features Breakdown
+4.1 Passenger Features
+Feature	Description
+Route & Stop Search	Search buses by route name or nearest stops
+Live Bus Location	Map with moving bus markers updated real-time
+Estimated Arrival Time	ETAs at selected bus stops
+Digital Ticket Purchase	Pay using Telebirr, CBE Birr, HelloCash, cards
+QR Code E-ticket	Scannable code for boarding verification
+Multilingual UI	Switch UI language: Amharic, English, Afaan Oromo
+Bus Arrival Notifications	Alerts for bus approach or delays via app/SMS
+Offline Mode	Cache basic info to use without internet
+Low-Bandwidth Mode	Minimal data usage for slow connections
+SMS Ticket Purchase Option	For feature phone users
+Voice Assistance	Basic Amharic voice commands & responses
+
+4.2 Admin Features
+Feature	Description
+Bus Management	Add/edit/remove buses & assign drivers
+Route Management	Create/update/delete bus routes and stops
+Driver Profiles	Manage driver info and assignments
+Ticket & Payment Tracking	View transactions, process refunds
+User Management	Manage passengers and staff accounts
+Real-time Monitoring	Live bus location dashboard
+Reports & Analytics	Usage statistics, revenue reports
+Alerts Management	Notify admins of delays, incidents, or failures
+Multi-language Support	Admin dashboard in local languages
+
+5. Data Models
+js
+Copy
+Edit
+// User
+{
+  _id: ObjectId,
+  name: String,
+  phone: String,
+  email: String,
+  passwordHash: String,
+  role: "passenger" | "admin",
+  preferredLanguage: "am" | "en" | "om",
+  createdAt: Date,
+  updatedAt: Date,
+}
+
+// Bus
+{
+  _id: ObjectId,
+  plateNumber: String,
+  routeId: ObjectId,
+  driverId: ObjectId,
+  status: "active" | "inactive",
+  currentLocation: { lat: Number, lng: Number },
+  updatedAt: Date,
+}
+
+// Route
+{
+  _id: ObjectId,
+  name: { am: String, en: String, om: String },
+  stops: [
+    {
+      stopId: ObjectId,
+      name: { am: String, en: String, om: String },
+      location: { lat: Number, lng: Number }
+    }
+  ],
+  schedule: {
+    startTime: String,
+    endTime: String,
+    frequencyMinutes: Number,
+  }
+}
+
+// Ticket
+{
+  _id: ObjectId,
+  userId: ObjectId,
+  busId: ObjectId,
+  purchaseTime: Date,
+  seatNumber: String,
+  qrCodeData: String,
+  paymentStatus: "pending" | "paid" | "failed",
+  paymentMethod: "telebirr" | "cbe" | "card",
+}
+6. API Endpoints Overview
+Method	Endpoint	Description	Auth Required	Role
+POST	/api/auth/register	Register passenger or admin	No	N/A
+POST	/api/auth/login	Login user	No	N/A
+GET	/api/buses	Get all active buses	Yes	Any
+GET	/api/buses/:id/location	Get live location of a bus	Yes	Any
+GET	/api/routes	Get all routes	Yes	Any
+POST	/api/tickets/purchase	Purchase ticket	Yes	Passenger
+GET	/api/tickets/:id	Get ticket info	Yes	Passenger
+GET	/api/admin/buses	Admin: list all buses	Yes	Admin
+POST	/api/admin/buses	Admin: add new bus	Yes	Admin
+PUT	/api/admin/buses/:id	Admin: update bus info	Yes	Admin
+GET	/api/admin/payments	Admin: view all payments	Yes	Admin
+
+7. Multilingual Support
+Use i18next for frontend localization.
+
+Language files for Amharic (am), English (en), Afaan Oromo (om) stored as JSON.
+
+User profile includes preferredLanguage to deliver localized content.
+
+Backend sends notifications (SMS, email) in user's preferred language.
+
+Routes, stops, and other text fields stored with translations for all three languages.
+
+UI includes a language switcher allowing manual override.
+
+8. Payment Integration
+Support Telebirr, CBE Birr, and HelloCash APIs for mobile money.
+
+Support card payments via Stripe or similar.
+
+On successful payment, generate QR code e-ticket and send confirmation via SMS/Email.
+
+Handle payment failures and retries gracefully.
+
+Store payment status in ticket data.
+
+9. Real-time Bus Location Tracking
+Buses send GPS data periodically to backend (simulate if no real GPS).
+
+Backend broadcasts location updates to frontend clients via Socket.IO.
+
+Frontend updates bus markers on map in real-time.
+
+Admin dashboard shows live fleet locations and status.
+
+10. Notifications
+Push notifications or SMS alerts for:
+
+Bus arrival near selected stop.
+
+Payment success/failure.
+
+Service disruptions or route changes.
+
+Messages localized to user's preferred language.
+
+11. User Experience & Accessibility
+Mobile-first responsive design.
+
+Offline mode with cached routes and schedules.
+
+Low bandwidth mode disables map tiles and uses minimal data.
+
+Voice commands or text-to-speech in Amharic (optional advanced feature).
+
+12. Suggested Tech Stack
+Layer	Technology
+Frontend	React.js + Tailwind CSS + i18next
+Backend	Node.js + Express + Socket.IO
+Database	MongoDB
+Map Service	Mapbox GL JS or Leaflet
+Payment Gateway	Telebirr API, CBE Birr, HelloCash, Stripe
+Authentication	JWT-based
