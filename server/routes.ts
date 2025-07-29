@@ -113,7 +113,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Bus not found" });
       }
       res.json({
-        id: bus.id,
+        id: bus._id,
         latitude: bus.currentLatitude,
         longitude: bus.currentLongitude,
         lastUpdated: bus.lastUpdated,
@@ -262,7 +262,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ws.send(JSON.stringify({
           type: 'bus_locations',
           data: buses.map(bus => ({
-            id: bus.id,
+            id: bus._id,
             plateNumber: bus.plateNumber,
             routeId: bus.routeId,
             latitude: bus.currentLatitude,
@@ -284,10 +284,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     for (const bus of buses) {
       if (bus.currentLatitude && bus.currentLongitude) {
         // Simulate small movement
-        const lat = parseFloat(bus.currentLatitude) + (Math.random() - 0.5) * 0.001;
-        const lng = parseFloat(bus.currentLongitude) + (Math.random() - 0.5) * 0.001;
+        const lat = bus.currentLatitude + (Math.random() - 0.5) * 0.001;
+        const lng = bus.currentLongitude + (Math.random() - 0.5) * 0.001;
         
-        await storage.updateBusLocation(bus.id, lat, lng);
+        await storage.updateBusLocation(bus._id, lat, lng);
       }
     }
 
@@ -296,7 +296,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const message = JSON.stringify({
       type: 'bus_locations',
       data: updatedBuses.map(bus => ({
-        id: bus.id,
+        id: bus._id,
         plateNumber: bus.plateNumber,
         routeId: bus.routeId,
         latitude: bus.currentLatitude,

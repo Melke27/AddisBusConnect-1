@@ -1,143 +1,237 @@
-import { sql } from 'drizzle-orm';
-import {
-  index,
-  jsonb,
-  pgTable,
-  timestamp,
-  varchar,
-  text,
-  decimal,
-  boolean,
-  integer,
-} from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
+import mongoose, { Schema, Document } from 'mongoose';
 import { z } from "zod";
 
-// Session storage table (required for Replit Auth)
-export const sessions = pgTable(
-  "sessions",
-  {
-    sid: varchar("sid").primaryKey(),
-    sess: jsonb("sess").notNull(),
-    expire: timestamp("expire").notNull(),
-  },
-  (table) => [index("IDX_session_expire").on(table.expire)],
-);
+// MongoDB connection
+export const connectDB = async () => {
+  try {
+    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/addis-bus';
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 5000,
+      connectTimeoutMS: 10000,
+    });
+    console.log('MongoDB connected successfully');
+  } catch (error) {
+    console.error('MongoDB connection failed, using in-memory fallback:', error);
+    // Continue without MongoDB - the storage will handle this gracefully
+  }
+};
 
-// User storage table (required for Replit Auth)
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  email: varchar("email").unique(),
-  firstName: varchar("first_name"),
-  lastName: varchar("last_name"),
-  profileImageUrl: varchar("profile_image_url"),
-  role: varchar("role", { enum: ["passenger", "admin"] }).default("passenger"),
-  preferredLanguage: varchar("preferred_language", { enum: ["en", "am", "om"] }).default("en"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+// User Interface and Schema
+export interface IUser extends Document {
+  _id: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  profileImageUrl?: string;
+  role: 'passenger' | 'admin';
+  preferredLanguage: 'en' | 'am' | 'om';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const userSchema = new Schema<IUser>({
+  email: { type: String, unique: true, sparse: true },
+  firstName: String,
+  lastName: String,
+  profileImageUrl: String,
+  role: { type: String, enum: ['passenger', 'admin'], default: 'passenger' },
+  preferredLanguage: { type: String, enum: ['en', 'am', 'om'], default: 'en' },
+}, { timestamps: true });
+
+export const User = mongoose.model<IUser>('User', userSchema);
+
+// Route Interface and Schema
+export interface IRoute extends Document {
+  _id: string;
+  nameEn: string;
+  nameAm: string;
+  nameOm: string;
+  startTimeHour: number;
+  startTimeMinute: number;
+  endTimeHour: number;
+  endTimeMinute: number;
+  frequencyMinutes: number;
+  price: number;
+  isActive: boolean;
+  createdAt: Date;
+}
+
+const routeSchema = new Schema<IRoute>({
+  nameEn: { type: String, required: true },
+  nameAm: { type: String, required: true },
+  nameOm: { type: String, required: true },
+  startTimeHour: { type: Number, required: true },
+  startTimeMinute: { type: Number, required: true },
+  endTimeHour: { type: Number, required: true },
+  endTimeMinute: { type: Number, required: true },
+  frequencyMinutes: { type: Number, required: true },
+  price: { type: Number, required: true },
+  isActive: { type: Boolean, default: true },
+}, { timestamps: true });
+
+export const Route = mongoose.model<IRoute>('Route', routeSchema);
+
+// Stop Interface and Schema
+export interface IStop extends Document {
+  _id: string;
+  nameEn: string;
+  nameAm: string;
+  nameOm: string;
+  latitude: number;
+  longitude: number;
+  createdAt: Date;
+}
+
+const stopSchema = new Schema<IStop>({
+  nameEn: { type: String, required: true },
+  nameAm: { type: String, required: true },
+  nameOm: { type: String, required: true },
+  latitude: { type: Number, required: true },
+  longitude: { type: Number, required: true },
+}, { timestamps: true });
+
+export const Stop = mongoose.model<IStop>('Stop', stopSchema);
+
+// Route Stops Interface and Schema
+export interface IRouteStop extends Document {
+  _id: string;
+  routeId: string;
+  stopId: string;
+  sequence: number;
+}
+
+const routeStopSchema = new Schema<IRouteStop>({
+  routeId: { type: String, required: true, ref: 'Route' },
+  stopId: { type: String, required: true, ref: 'Stop' },
+  sequence: { type: Number, required: true },
 });
 
-// Bus Routes
-export const routes = pgTable("routes", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  nameEn: text("name_en").notNull(),
-  nameAm: text("name_am").notNull(),
-  nameOm: text("name_om").notNull(),
-  startTimeHour: integer("start_time_hour").notNull(),
-  startTimeMinute: integer("start_time_minute").notNull(),
-  endTimeHour: integer("end_time_hour").notNull(),
-  endTimeMinute: integer("end_time_minute").notNull(),
-  frequencyMinutes: integer("frequency_minutes").notNull(),
-  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
-  isActive: boolean("is_active").default(true),
-  createdAt: timestamp("created_at").defaultNow(),
+export const RouteStop = mongoose.model<IRouteStop>('RouteStop', routeStopSchema);
+
+// Bus Interface and Schema
+export interface IBus extends Document {
+  _id: string;
+  plateNumber: string;
+  routeId?: string;
+  driverId?: string;
+  status: 'active' | 'inactive' | 'maintenance';
+  currentLatitude?: number;
+  currentLongitude?: number;
+  lastUpdated: Date;
+  createdAt: Date;
+}
+
+const busSchema = new Schema<IBus>({
+  plateNumber: { type: String, required: true, unique: true },
+  routeId: { type: String, ref: 'Route' },
+  driverId: { type: String, ref: 'User' },
+  status: { type: String, enum: ['active', 'inactive', 'maintenance'], default: 'active' },
+  currentLatitude: Number,
+  currentLongitude: Number,
+  lastUpdated: { type: Date, default: Date.now },
+}, { timestamps: true });
+
+export const Bus = mongoose.model<IBus>('Bus', busSchema);
+
+// Ticket Interface and Schema
+export interface ITicket extends Document {
+  _id: string;
+  userId: string;
+  routeId: string;
+  busId?: string;
+  purchaseTime: Date;
+  validUntil: Date;
+  qrCodeData: string;
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  paymentMethod?: 'telebirr' | 'cbe' | 'card' | 'hellocash';
+  amount: number;
+  createdAt: Date;
+}
+
+const ticketSchema = new Schema<ITicket>({
+  userId: { type: String, required: true, ref: 'User' },
+  routeId: { type: String, required: true, ref: 'Route' },
+  busId: { type: String, ref: 'Bus' },
+  purchaseTime: { type: Date, default: Date.now },
+  validUntil: { type: Date, required: true },
+  qrCodeData: { type: String, required: true },
+  paymentStatus: { type: String, enum: ['pending', 'paid', 'failed', 'refunded'], default: 'pending' },
+  paymentMethod: { type: String, enum: ['telebirr', 'cbe', 'card', 'hellocash'] },
+  amount: { type: Number, required: true },
+}, { timestamps: true });
+
+export const Ticket = mongoose.model<ITicket>('Ticket', ticketSchema);
+
+// Session Interface and Schema (for authentication)
+export interface ISession extends Document {
+  _id: string;
+  sid: string;
+  sess: any;
+  expire: Date;
+}
+
+const sessionSchema = new Schema<ISession>({
+  sid: { type: String, required: true, unique: true },
+  sess: { type: Schema.Types.Mixed, required: true },
+  expire: { type: Date, required: true, index: true },
 });
 
-// Bus Stops
-export const stops = pgTable("stops", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  nameEn: text("name_en").notNull(),
-  nameAm: text("name_am").notNull(),
-  nameOm: text("name_om").notNull(),
-  latitude: decimal("latitude", { precision: 10, scale: 8 }).notNull(),
-  longitude: decimal("longitude", { precision: 11, scale: 8 }).notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+export const Session = mongoose.model<ISession>('Session', sessionSchema);
+
+// Validation Schemas
+export const insertUserSchema = z.object({
+  email: z.string().email().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  profileImageUrl: z.string().optional(),
+  role: z.enum(['passenger', 'admin']).optional(),
+  preferredLanguage: z.enum(['en', 'am', 'om']).optional(),
 });
 
-// Route Stops (Junction table)
-export const routeStops = pgTable("route_stops", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  routeId: varchar("route_id").references(() => routes.id).notNull(),
-  stopId: varchar("stop_id").references(() => stops.id).notNull(),
-  sequence: integer("sequence").notNull(),
+export const insertRouteSchema = z.object({
+  nameEn: z.string().min(1),
+  nameAm: z.string().min(1),
+  nameOm: z.string().min(1),
+  startTimeHour: z.number().min(0).max(23),
+  startTimeMinute: z.number().min(0).max(59),
+  endTimeHour: z.number().min(0).max(23),
+  endTimeMinute: z.number().min(0).max(59),
+  frequencyMinutes: z.number().min(1),
+  price: z.number().positive(),
+  isActive: z.boolean().optional(),
 });
 
-// Buses
-export const buses = pgTable("buses", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  plateNumber: varchar("plate_number").notNull().unique(),
-  routeId: varchar("route_id").references(() => routes.id),
-  driverId: varchar("driver_id").references(() => users.id),
-  status: varchar("status", { enum: ["active", "inactive", "maintenance"] }).default("active"),
-  currentLatitude: decimal("current_latitude", { precision: 10, scale: 8 }),
-  currentLongitude: decimal("current_longitude", { precision: 11, scale: 8 }),
-  lastUpdated: timestamp("last_updated").defaultNow(),
-  createdAt: timestamp("created_at").defaultNow(),
+export const insertStopSchema = z.object({
+  nameEn: z.string().min(1),
+  nameAm: z.string().min(1),
+  nameOm: z.string().min(1),
+  latitude: z.number(),
+  longitude: z.number(),
 });
 
-// Tickets
-export const tickets = pgTable("tickets", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").references(() => users.id).notNull(),
-  routeId: varchar("route_id").references(() => routes.id).notNull(),
-  busId: varchar("bus_id").references(() => buses.id),
-  purchaseTime: timestamp("purchase_time").defaultNow(),
-  validUntil: timestamp("valid_until").notNull(),
-  qrCodeData: text("qr_code_data").notNull(),
-  paymentStatus: varchar("payment_status", { enum: ["pending", "paid", "failed", "refunded"] }).default("pending"),
-  paymentMethod: varchar("payment_method", { enum: ["telebirr", "cbe", "card", "hellocash"] }),
-  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+export const insertBusSchema = z.object({
+  plateNumber: z.string().min(1),
+  routeId: z.string().optional(),
+  driverId: z.string().optional(),
+  status: z.enum(['active', 'inactive', 'maintenance']).optional(),
+  currentLatitude: z.number().optional(),
+  currentLongitude: z.number().optional(),
 });
 
-// Insert Schemas
-export const insertUserSchema = createInsertSchema(users).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export const insertRouteSchema = createInsertSchema(routes).omit({
-  id: true,
-  createdAt: true,
-});
-
-export const insertStopSchema = createInsertSchema(stops).omit({
-  id: true,
-  createdAt: true,
-});
-
-export const insertBusSchema = createInsertSchema(buses).omit({
-  id: true,
-  createdAt: true,
-  lastUpdated: true,
-});
-
-export const insertTicketSchema = createInsertSchema(tickets).omit({
-  id: true,
-  createdAt: true,
-  purchaseTime: true,
+export const insertTicketSchema = z.object({
+  userId: z.string(),
+  routeId: z.string(),
+  busId: z.string().optional(),
+  validUntil: z.date(),
+  qrCodeData: z.string(),
+  paymentStatus: z.enum(['pending', 'paid', 'failed', 'refunded']).optional(),
+  paymentMethod: z.enum(['telebirr', 'cbe', 'card', 'hellocash']).optional(),
+  amount: z.number().positive(),
 });
 
 // Types
-export type UpsertUser = typeof users.$inferInsert;
-export type User = typeof users.$inferSelect;
+export type UpsertUser = z.infer<typeof insertUserSchema> & { id?: string };
 export type InsertRoute = z.infer<typeof insertRouteSchema>;
-export type Route = typeof routes.$inferSelect;
 export type InsertStop = z.infer<typeof insertStopSchema>;
-export type Stop = typeof stops.$inferSelect;
 export type InsertBus = z.infer<typeof insertBusSchema>;
-export type Bus = typeof buses.$inferSelect;
 export type InsertTicket = z.infer<typeof insertTicketSchema>;
-export type Ticket = typeof tickets.$inferSelect;
-export type RouteStop = typeof routeStops.$inferSelect;

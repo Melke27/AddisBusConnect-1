@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Button } from "@/components/ui/button";
 import LanguageSelector from "./LanguageSelector";
-import { Bus, Bell, User, Home, Map, Ticket, UserIcon } from "lucide-react";
+import { Bus, Bell, User, Home, Map, Ticket, UserIcon, Calendar, Settings } from "lucide-react";
 
 export default function Navigation() {
   const { user, isAuthenticated } = useAuth();
@@ -30,7 +30,15 @@ export default function Navigation() {
               
               {isAuthenticated ? (
                 <div className="flex items-center space-x-2">
-                  <Bell className="h-5 w-5 cursor-pointer hover:bg-blue-600 p-1 rounded" />
+                  <Link href="/notifications">
+                    <Bell className="h-5 w-5 cursor-pointer hover:bg-blue-600 p-1 rounded" />
+                  </Link>
+                  <Link href="/schedule">
+                    <Calendar className="h-5 w-5 cursor-pointer hover:bg-blue-600 p-1 rounded" />
+                  </Link>
+                  <Link href="/admin">
+                    <Settings className="h-5 w-5 cursor-pointer hover:bg-blue-600 p-1 rounded" />
+                  </Link>
                   <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center cursor-pointer">
                     <User className="h-4 w-4" />
                   </div>
@@ -68,24 +76,31 @@ export default function Navigation() {
             </button>
           </Link>
           
-          <Link href="/map">
-            <button className={`flex flex-col items-center p-2 ${isActive('/map') ? 'text-primary' : 'text-gray-500'}`}>
-              <Map className="h-5 w-5" />
-              <span className="text-xs mt-1">{t('navigation.map')}</span>
+          <Link href="/schedule">
+            <button className={`flex flex-col items-center p-2 ${isActive('/schedule') ? 'text-primary' : 'text-gray-500'}`}>
+              <Calendar className="h-5 w-5" />
+              <span className="text-xs mt-1">Schedule</span>
+            </button>
+          </Link>
+          
+          <Link href="/notifications">
+            <button className={`flex flex-col items-center p-2 ${isActive('/notifications') ? 'text-primary' : 'text-gray-500'}`}>
+              <Bell className="h-5 w-5" />
+              <span className="text-xs mt-1">Alerts</span>
             </button>
           </Link>
           
           <Link href="/tickets">
             <button className={`flex flex-col items-center p-2 ${isActive('/tickets') ? 'text-primary' : 'text-gray-500'}`}>
               <Ticket className="h-5 w-5" />
-              <span className="text-xs mt-1">{t('navigation.tickets')}</span>
+              <span className="text-xs mt-1">My Tickets</span>
             </button>
           </Link>
           
-          <Link href="/profile">
-            <button className={`flex flex-col items-center p-2 ${isActive('/profile') ? 'text-primary' : 'text-gray-500'}`}>
+          <Link href="/admin">
+            <button className={`flex flex-col items-center p-2 ${isActive('/admin') ? 'text-primary' : 'text-gray-500'}`}>
               <UserIcon className="h-5 w-5" />
-              <span className="text-xs mt-1">{t('navigation.profile')}</span>
+              <span className="text-xs mt-1">Profile</span>
             </button>
           </Link>
         </div>

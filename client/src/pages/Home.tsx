@@ -10,7 +10,7 @@ import LiveMap from "@/components/LiveMap";
 import TicketPurchase from "./TicketPurchase";
 import AdminDashboard from "./AdminDashboard";
 import Navigation from "@/components/Navigation";
-import type { Route, User } from "@shared/schema";
+import type { IRoute, IUser } from "@shared/schema";
 import { 
   MapPin, 
   Flag, 
@@ -22,18 +22,22 @@ import {
   Bus,
   TrendingUp,
   TargetIcon,
-  Plus
+  Plus,
+  Calendar,
+  Bell,
+  ArrowRight
 } from "lucide-react";
+import { Link } from "wouter";
 
 export default function Home() {
   const { t } = useLanguage();
-  const { user } = useAuth() as { user: User | undefined };
-  const [selectedRoute, setSelectedRoute] = useState<Route | null>(null);
+  const { user } = useAuth() as { user: IUser | undefined };
+  const [selectedRoute, setSelectedRoute] = useState<IRoute | null>(null);
   const [searchFrom, setSearchFrom] = useState("");
   const [searchTo, setSearchTo] = useState("");
   const [showAdmin, setShowAdmin] = useState(false);
 
-  const { data: routes, isLoading: routesLoading } = useQuery<Route[]>({
+  const { data: routes, isLoading: routesLoading } = useQuery<IRoute[]>({
     queryKey: ['/api/routes'],
   });
 
@@ -117,16 +121,43 @@ export default function Home() {
         
         {/* Quick Actions */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-          {quickActions.map((action, index) => (
+          <Link href="/schedule">
             <Button
-              key={index}
               variant="outline"
-              className="h-auto p-4 flex flex-col items-center gap-2 bg-white hover:shadow-md transition-shadow"
+              className="h-auto p-4 flex flex-col items-center gap-2 bg-white hover:shadow-md transition-shadow w-full"
             >
-              <div className="text-primary">{action.icon}</div>
-              <span className="text-sm font-medium text-center">{action.label}</span>
+              <div className="text-primary"><Calendar className="h-6 w-6" /></div>
+              <span className="text-sm font-medium text-center">Schedules</span>
             </Button>
-          ))}
+          </Link>
+          
+          <Link href="/notifications">
+            <Button
+              variant="outline"
+              className="h-auto p-4 flex flex-col items-center gap-2 bg-white hover:shadow-md transition-shadow w-full"
+            >
+              <div className="text-primary"><Bell className="h-6 w-6" /></div>
+              <span className="text-sm font-medium text-center">Notifications</span>
+            </Button>
+          </Link>
+          
+          <Link href="/tickets">
+            <Button
+              variant="outline"
+              className="h-auto p-4 flex flex-col items-center gap-2 bg-white hover:shadow-md transition-shadow w-full"
+            >
+              <div className="text-primary"><Ticket className="h-6 w-6" /></div>
+              <span className="text-sm font-medium text-center">My Tickets</span>
+            </Button>
+          </Link>
+          
+          <Button
+            variant="outline"
+            className="h-auto p-4 flex flex-col items-center gap-2 bg-white hover:shadow-md transition-shadow"
+          >
+            <div className="text-primary"><MapPin className="h-6 w-6" /></div>
+            <span className="text-sm font-medium text-center">Live Map</span>
+          </Button>
         </div>
         
         {/* Popular Routes */}
@@ -134,7 +165,7 @@ export default function Home() {
           <CardContent className="p-6">
             <h3 className="text-lg font-medium mb-4 flex items-center">
               <TrendingUp className="h-5 w-5 mr-2 text-primary" />
-              {t('routes.popular')}
+              Popular Routes
             </h3>
             <div className="space-y-3">
               {routesLoading ? (
@@ -146,7 +177,7 @@ export default function Home() {
                   const nextBus = getNextBusTime();
                   return (
                     <div
-                      key={route.id}
+                      key={route._id}
                       className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
                       onClick={() => setSelectedRoute(route)}
                     >
@@ -157,15 +188,17 @@ export default function Home() {
                         <div>
                           <div className="font-medium">{route.nameEn}</div>
                           <div className="text-sm text-gray-500">
-                            {t('routes.every')} {route.frequencyMinutes} {t('routes.minutesShort')}
+                            Every {route.frequencyMinutes} minutes • {route.price} ETB
                           </div>
                         </div>
                       </div>
                       <div className="text-right">
                         <div className={`text-sm font-medium ${getNextBusColor(nextBus)}`}>
-                          {t('routes.next')}: {nextBus}
+                          Next: {nextBus}
                         </div>
-                        <div className="text-xs text-gray-500">{route.price} {t('common.etb')}</div>
+                        <Link href={`/routes/${route._id}`}>
+                          <ArrowRight className="h-4 w-4 text-gray-400 mt-1" />
+                        </Link>
                       </div>
                     </div>
                   );
@@ -179,10 +212,10 @@ export default function Home() {
         <Card className="mb-6">
           <CardContent className="p-6">
             <h3 className="text-lg font-medium mb-4 flex items-center">
-              <TargetIcon className="h-5 w-5 mr-2 text-success" />
-              {t('liveTracking.title')}
-              <span className="ml-2 px-2 py-1 bg-success text-white text-xs rounded-full">
-                {t('liveTracking.live')}
+              <TargetIcon className="h-5 w-5 mr-2 text-green-600" />
+              Live Bus Tracking
+              <span className="ml-2 px-2 py-1 bg-green-600 text-white text-xs rounded-full">
+                LIVE
               </span>
             </h3>
             
@@ -196,12 +229,12 @@ export default function Home() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-medium">{t('admin.dashboard')}</h3>
+                  <h3 className="text-lg font-medium">Admin Dashboard</h3>
                   <p className="text-gray-600">Manage buses, routes, and view analytics</p>
                 </div>
-                <Button onClick={() => setShowAdmin(true)}>
-                  View Dashboard
-                </Button>
+                <Link href="/admin">
+                  <Button>View Dashboard</Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
