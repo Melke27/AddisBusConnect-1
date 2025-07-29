@@ -1,0 +1,86 @@
+{
+  "appName": "AddisBus Connect",
+  "navigation": {
+    "home": "Mana",
+    "map": "Kaartaa",
+    "tickets": "Tikeetota",
+    "profile": "Profaayilii"
+  },
+  "search": {
+    "title": "Otobusii Kee Barbaadi",
+    "subtitle": "Otobusota yeroo qabatamaa hordofii fi tikeetota dijitaalaa bitadhu",
+    "from": "Irraa",
+    "to": "Gara",
+    "fromPlaceholder": "Bakka jalqabaa galchi",
+    "toPlaceholder": "Bakka dhufaa galchi",
+    "searchButton": "Barbaadi"
+  },
+  "quickActions": {
+    "nearbyStops": "Dhaabbilee Dhiheenyaa",
+    "myTickets": "Tikeetota Koo",
+    "liveMap": "Kaartaa Kallattii",
+    "schedules": "Sagantaalee"
+  },
+  "routes": {
+    "popular": "Karaalee Jaallatan",
+    "next": "Itti Aanu",
+    "minutes": "daqiiqaa",
+    "every": "Tokkoon Tokkoon",
+    "minutesShort": "daqiiqoota"
+  },
+  "liveTracking": {
+    "title": "Hordoffii Otobusii Kallattii",
+    "live": "KALLATTII",
+    "myLocation": "Bakka Koo",
+    "traffic": "Tiraafikii",
+    "fullScreen": "Iskiriinii Guutuu"
+  },
+  "ticket": {
+    "purchase": "Tikeeta Bitadhu",
+    "paymentMethod": "Mala Kaffaltii",
+    "purchaseButton": "Tikeeta Bitadhu",
+    "yourTicket": "Tikeetni Kee Dijitaalaa",
+    "route": "Karaa",
+    "ticketId": "Eenyummaa Tikeetaa",
+    "date": "Guyyaa",
+    "validUntil": "Hanga",
+    "showQR": "Yeroo yaabbattu koodii QR kana agarsiisi",
+    "download": "Buufadhu",
+    "share": "Qooddadhu",
+    "estimated": "Tilmaama"
+  },
+  "payment": {
+    "telebirr": "Telebirr",
+    "cbe": "CBE Birr",
+    "card": "Kaardii"
+  },
+  "admin": {
+    "dashboard": "Gabatee Bulchaa",
+    "activeBuses": "Otobusota Sochii",
+    "todayTickets": "Tikeetota Har'aa",
+    "revenue": "Galii (ETB)",
+    "alerts": "Akeekkachiisa Sochii",
+    "manageBuses": "Otobusota Bulchi",
+    "manageRoutes": "Karaalee Bulchi",
+    "viewReports": "Gabaasalee Ilaali",
+    "manageBusesDesc": "Otobusota dabali, gulaali ykn haqi",
+    "manageRoutesDesc": "Karaalee fi dhaabbiilee haaromsi",
+    "viewReportsDesc": "Xiinxalaa fi hubannoo"
+  },
+  "auth": {
+    "login": "Seeni",
+    "logout": "Baahi",
+    "welcome": "Gara AddisBus Connect Baga Nagaan Dhuftan",
+    "loginDescription": "Furmaata hordoffii otobusii fi tikeetaa ismaartii keessan Finfinneedhaaf",
+    "getStarted": "Jalqabi",
+    "unauthorized": "Hayyamaa Hin Qabu",
+    "unauthorizedDesc": "Baataniiru. Ammallee seenan..."
+  },
+  "common": {
+    "processing": "Adeemsa Irra...",
+    "error": "Dogoggora",
+    "success": "Milkaa'ina",
+    "loading": "Fe'aa jira...",
+    "etb": "ETB"
+  }
+}

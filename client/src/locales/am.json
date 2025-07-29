@@ -1,0 +1,86 @@
+{
+  "appName": "አዲስ ቡስ ኮነክት",
+  "navigation": {
+    "home": "መነሻ",
+    "map": "ካርታ",
+    "tickets": "ትኬቶች",
+    "profile": "መገለጫ"
+  },
+  "search": {
+    "title": "አውቶቡስዎን ይፈልጉ",
+    "subtitle": "አውቶቡሶችን በቅጽበት ይከታተሉ እና ዲጂታል ቲኬቶችን ይግዙ",
+    "from": "ከ",
+    "to": "ወደ",
+    "fromPlaceholder": "መነሻ ቦታ ያስገቡ",
+    "toPlaceholder": "መድረሻ ያስገቡ",
+    "searchButton": "ይፈልጉ"
+  },
+  "quickActions": {
+    "nearbyStops": "አቅራቢያ ማቆሚያዎች",
+    "myTickets": "የእኔ ቲኬቶች",
+    "liveMap": "የቀጥታ ካርታ",
+    "schedules": "መርሐ ግብሮች"
+  },
+  "routes": {
+    "popular": "ተወዳጅ መንገዶች",
+    "next": "ቀጣይ",
+    "minutes": "ደቂቃ",
+    "every": "በየ",
+    "minutesShort": "ደቂቃዎች"
+  },
+  "liveTracking": {
+    "title": "የቀጥታ አውቶቡስ ክትትል",
+    "live": "ቀጥታ",
+    "myLocation": "የኔ አቀማመጥ",
+    "traffic": "ትራፊክ",
+    "fullScreen": "ሙሉ ስክሪን"
+  },
+  "ticket": {
+    "purchase": "ቲኬት ግዛ",
+    "paymentMethod": "የክፍያ ዘዴ",
+    "purchaseButton": "ቲኬት ግዛ",
+    "yourTicket": "የእርስዎ ዲጂታል ቲኬት",
+    "route": "መንገድ",
+    "ticketId": "የቲኬት መለያ",
+    "date": "ቀን",
+    "validUntil": "እስከ ድረስ ይሰራል",
+    "showQR": "ሲወጡ ይህንን QR ኮድ ያሳዩ",
+    "download": "አውርድ",
+    "share": "አካፍል",
+    "estimated": "ግምት"
+  },
+  "payment": {
+    "telebirr": "ቴሌ ብር",
+    "cbe": "ሲቢኢ ብር",
+    "card": "ካርድ"
+  },
+  "admin": {
+    "dashboard": "የአስተዳዳሪ ዳሽቦርድ",
+    "activeBuses": "ንቁ አውቶቡሶች",
+    "todayTickets": "የዛሬ ቲኬቶች",
+    "revenue": "ገቢ (ብር)",
+    "alerts": "ንቁ ማስጠንቀቂያዎች",
+    "manageBuses": "አውቶቡሶችን አስተዳድር",
+    "manageRoutes": "መንገዶችን አስተዳድር",
+    "viewReports": "ሪፖርቶችን ይመልከቱ",
+    "manageBusesDesc": "አውቶቡሶችን ይጨምሩ፣ ያርትዑ ወይም ያስወግዱ",
+    "manageRoutesDesc": "መንገዶችን እና ማቆሚያዎችን ያዘምኑ",
+    "viewReportsDesc": "ትንታኔዎች እና ግንዛቤዎች"
+  },
+  "auth": {
+    "login": "ግባ",
+    "logout": "ውጣ",
+    "welcome": "ወደ አዲስ ቡስ ኮነክት እንኳን በደህና መጡ",
+    "loginDescription": "ለአዲስ አበባ የእርስዎ ስማርት አውቶቡስ ክትትል እና ቲኬት መፍትሄ",
+    "getStarted": "ጀምር",
+    "unauthorized": "ያልተፈቀደ",
+    "unauthorizedDesc": "ወጥተዋል። እንደገና እየገቡ ነው..."
+  },
+  "common": {
+    "processing": "በሂደት ላይ...",
+    "error": "ስህተት",
+    "success": "ተሳክቷል",
+    "loading": "በመጫን ላይ...",
+    "etb": "ብር"
+  }
+}

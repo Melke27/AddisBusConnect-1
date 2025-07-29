@@ -1,0 +1,86 @@
+{
+  "appName": "AddisBus Connect",
+  "navigation": {
+    "home": "Home",
+    "map": "Map",
+    "tickets": "Tickets",
+    "profile": "Profile"
+  },
+  "search": {
+    "title": "Find Your Bus",
+    "subtitle": "Track buses in real-time and buy digital tickets",
+    "from": "From",
+    "to": "To",
+    "fromPlaceholder": "Enter starting point",
+    "toPlaceholder": "Enter destination",
+    "searchButton": "Search"
+  },
+  "quickActions": {
+    "nearbyStops": "Nearby Stops",
+    "myTickets": "My Tickets",
+    "liveMap": "Live Map",
+    "schedules": "Schedules"
+  },
+  "routes": {
+    "popular": "Popular Routes",
+    "next": "Next",
+    "minutes": "min",
+    "every": "Every",
+    "minutesShort": "minutes"
+  },
+  "liveTracking": {
+    "title": "Live Bus Tracking",
+    "live": "LIVE",
+    "myLocation": "My Location",
+    "traffic": "Traffic",
+    "fullScreen": "Full Screen"
+  },
+  "ticket": {
+    "purchase": "Purchase Ticket",
+    "paymentMethod": "Payment Method",
+    "purchaseButton": "Purchase Ticket",
+    "yourTicket": "Your Digital Ticket",
+    "route": "Route",
+    "ticketId": "Ticket ID",
+    "date": "Date",
+    "validUntil": "Valid Until",
+    "showQR": "Show this QR code when boarding",
+    "download": "Download",
+    "share": "Share",
+    "estimated": "Est."
+  },
+  "payment": {
+    "telebirr": "Telebirr",
+    "cbe": "CBE Birr",
+    "card": "Card"
+  },
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "activeBuses": "Active Buses",
+    "todayTickets": "Today's Tickets",
+    "revenue": "Revenue (ETB)",
+    "alerts": "Active Alerts",
+    "manageBuses": "Manage Buses",
+    "manageRoutes": "Manage Routes",
+    "viewReports": "View Reports",
+    "manageBusesDesc": "Add, edit, or remove buses",
+    "manageRoutesDesc": "Update routes and stops",
+    "viewReportsDesc": "Analytics and insights"
+  },
+  "auth": {
+    "login": "Log In",
+    "logout": "Log Out",
+    "welcome": "Welcome to AddisBus Connect",
+    "loginDescription": "Your smart bus tracking and ticketing solution for Addis Ababa",
+    "getStarted": "Get Started",
+    "unauthorized": "Unauthorized",
+    "unauthorizedDesc": "You are logged out. Logging in again..."
+  },
+  "common": {
+    "processing": "Processing...",
+    "error": "Error",
+    "success": "Success",
+    "loading": "Loading...",
+    "etb": "ETB"
+  }
+}
