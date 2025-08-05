@@ -1,0 +1,88 @@
+{
+  "appName": "ኣዲስ ኣውቶቡስ ምትእስሳር",
+  "navigation": {
+    "home": "መበገሲ",
+    "map": "ካርታ",
+    "tickets": "ትኬታት",
+    "profile": "ፕሮፋይል"
+  },
+  "search": {
+    "title": "ኣውቶቡስካ ድለ",
+    "subtitle": "ኣውቶቡሳት ብቕጽበት ተኸታተል እሞ ዲጂታል ትኬታት ግዛእ",
+    "from": "ካብ",
+    "to": "ናብ",
+    "fromPlaceholder": "መበገሲ ኣእቱ",
+    "toPlaceholder": "መዓላ ኣእቱ",
+    "searchButton": "ድለ"
+  },
+  "quickActions": {
+    "nearbyStops": "ኣብ ከባቢ ዝርከባ መዓርፎታት",
+    "myTickets": "ትኬታተይ",
+    "liveMap": "ቀጥታ ካርታ",
+    "schedules": "ሰሌዳታት"
+  },
+  "routes": {
+    "popular": "ፍሉጣት መስመራት",
+    "next": "ቀጻሊ",
+    "minutes": "ደቒቓ",
+    "every": "ነፍሲ ወከፍ",
+    "minutesShort": "ደቒቓታት"
+  },
+  "liveTracking": {
+    "title": "ቀጥታ ምክትታል ኣውቶቡስ",
+    "live": "ቀጥታ",
+    "myLocation": "ቦታይ",
+    "traffic": "ትራፊክ",
+    "fullScreen": "ምሉእ ስክሪን"
+  },
+  "ticket": {
+    "purchase": "ትኬት ግዛእ",
+    "paymentMethod": "መገዲ ክፍሊት",
+    "purchaseButton": "ትኬት ግዛእ",
+    "yourTicket": "ዲጂታል ትኬትካ",
+    "route": "መስመር",
+    "ticketId": "ቑጽሪ ትኬት",
+    "date": "ዕለት",
+    "validUntil": "ክሳብ ዝጸንሕ",
+    "showQR": "ክትድይብ ከለኻ እዚ QR ኮድ ኣርኢ",
+    "download": "ኣውርድ",
+    "share": "ኣካፍል",
+    "estimated": "ግምት"
+  },
+  "payment": {
+    "telebirr": "ቴሌብር",
+    "cbe": "ሲቢኢ ብር",
+    "card": "ካርድ"
+  },
+  "admin": {
+    "dashboard": "ኣድሚን ዳሽቦርድ",
+    "activeBuses": "ንጡፋት ኣውቶቡሳት",
+    "todayTickets": "ትኬታት ሎሚ",
+    "revenue": "ኣታዊ (ETB)",
+    "alerts": "ንጡፋት መጠንቀቕታታት",
+    "manageBuses": "ኣውቶቡሳት ኣመሓድር",
+    "manageRoutes": "መስመራት ኣመሓድር",
+    "viewReports": "ጸብጻባት ረአ",
+    "manageBusesDesc": "ኣውቶቡሳት ወስኽ፣ ኣዐሪ ወይ ኣወግድ",
+    "manageRoutesDesc": "መስመራትን መዓርፎታትን ኣዘምን",
+    "viewReportsDesc": "ትንተናታትን ሓበሬታታትን"
+  },
+  "auth": {
+    "login": "እቶ",
+    "logout": "ውጻእ",
+    "welcome": "እንኳዕ ናብ ኣዲስ ኣውቶቡስ ምትእስሳር ብደሓን መጻእኩም",
+    "loginDescription": "ንኣዲስ ኣበባ ዝኸውን ብሉጽ ኣውቶቡስ መከታተሊን መሸጣ ትኬትን ፍታሕካ",
+    "getStarted": "ጀምር",
+    "unauthorized": "ዘይፍቑድ",
+    "unauthorizedDesc": "ወጺእካ ኣለኻ። እንደገና ትኣቱ ኣለኻ..."
+  },
+  "common": {
+    "processing": "ይሰርሕ ኣሎ...",
+    "error": "ጌጋ",
+    "success": "ዓወት",
+    "loading": "ይጽዕን ኣሎ...",
+    "etb": "ETB"
+  }
+}
+
+

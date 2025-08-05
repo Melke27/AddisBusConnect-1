@@ -25,6 +25,7 @@ export interface IStorage {
   // User operations (required for Replit Auth)
   getUser(id: string): Promise<IUser | null>;
   upsertUser(user: UpsertUser): Promise<IUser>;
+  getAllUsers(): Promise<IUser[]>;
   
   // Route operations
   getAllRoutes(): Promise<IRoute[]>;
@@ -138,16 +139,64 @@ export class HybridStorage implements IStorage {
       createdAt: new Date(),
     };
 
+    const route4 = {
+      _id: "route-4",
+      nameEn: "Meskel Square ↔ Bole Airport",
+      nameAm: "መስቀል አደባባይ ↔ ቦሌ አየር ማረፊያ",
+      nameOm: "Meskel Square ↔ Bole Airport",
+      startTimeHour: 5,
+      startTimeMinute: 0,
+      endTimeHour: 23,
+      endTimeMinute: 0,
+      frequencyMinutes: 5,
+      price: 25.00,
+      isActive: true,
+      createdAt: new Date(),
+    };
+
+    const route5 = {
+      _id: "route-5",
+      nameEn: "Kazanchis ↔ CMC",
+      nameAm: "ካዛንቺስ ↔ ሲ.ኤም.ሲ",
+      nameOm: "Kazanchis ↔ CMC",
+      startTimeHour: 6,
+      startTimeMinute: 15,
+      endTimeHour: 20,
+      endTimeMinute: 30,
+      frequencyMinutes: 12,
+      price: 16.00,
+      isActive: true,
+      createdAt: new Date(),
+    };
+
     this.memoryData.routes.set(route1._id, route1);
     this.memoryData.routes.set(route2._id, route2);
     this.memoryData.routes.set(route3._id, route3);
+    this.memoryData.routes.set(route4._id, route4);
+    this.memoryData.routes.set(route5._id, route5);
 
-    // Create mock stops
+    // Create mock stops with more comprehensive coverage
     const stops = [
       { _id: "stop-1", nameEn: "Arat Kilo", nameAm: "አራት ኪሎ", nameOm: "Arat Kilo", latitude: 9.0340, longitude: 38.7600, createdAt: new Date() },
       { _id: "stop-2", nameEn: "Merkato", nameAm: "መርካቶ", nameOm: "Merkato", latitude: 9.0122, longitude: 38.7180, createdAt: new Date() },
       { _id: "stop-3", nameEn: "Bole", nameAm: "ቦሌ", nameOm: "Bole", latitude: 8.9906, longitude: 38.7578, createdAt: new Date() },
       { _id: "stop-4", nameEn: "Piassa", nameAm: "ፒያሣ", nameOm: "Piassa", latitude: 9.0336, longitude: 38.7469, createdAt: new Date() },
+      { _id: "stop-5", nameEn: "Meskel Square", nameAm: "መስቀል አደባባይ", nameOm: "Meskel Square", latitude: 9.0122, longitude: 38.7469, createdAt: new Date() },
+      { _id: "stop-6", nameEn: "Bole Airport", nameAm: "ቦሌ አየር ማረፊያ", nameOm: "Bole Airport", latitude: 8.9777, longitude: 38.7993, createdAt: new Date() },
+      { _id: "stop-7", nameEn: "Gerji", nameAm: "ገርጂ", nameOm: "Gerji", latitude: 9.0122, longitude: 38.7469, createdAt: new Date() },
+      { _id: "stop-8", nameEn: "Stadium", nameAm: "ስታዲየም", nameOm: "Stadium", latitude: 9.0122, longitude: 38.7469, createdAt: new Date() },
+      { _id: "stop-9", nameEn: "Kazanchis", nameAm: "ካዛንቺስ", nameOm: "Kazanchis", latitude: 9.0122, longitude: 38.7469, createdAt: new Date() },
+      { _id: "stop-10", nameEn: "CMC", nameAm: "ሲ.ኤም.ሲ", nameOm: "CMC", latitude: 9.0122, longitude: 38.7469, createdAt: new Date() },
+      { _id: "stop-11", nameEn: "Addis Ababa University", nameAm: "አዲስ አበባ ዩኒቨርሲቲ", nameOm: "Addis Ababa University", latitude: 9.0340, longitude: 38.7600, createdAt: new Date() },
+      { _id: "stop-12", nameEn: "National Theatre", nameAm: "የብሔራዊ ቴያትር", nameOm: "National Theatre", latitude: 9.0336, longitude: 38.7469, createdAt: new Date() },
+      { _id: "stop-13", nameEn: "Unity Park", nameAm: "የአንድነት ፓርክ", nameOm: "Unity Park", latitude: 9.0122, longitude: 38.7469, createdAt: new Date() },
+      { _id: "stop-14", nameEn: "Entoto", nameAm: "እንጦጦ", nameOm: "Entoto", latitude: 9.0340, longitude: 38.7600, createdAt: new Date() },
+      { _id: "stop-15", nameEn: "Kolfe", nameAm: "ኮልፌ", nameOm: "Kolfe", latitude: 9.0122, longitude: 38.7469, createdAt: new Date() },
+      { _id: "stop-16", nameEn: "Lideta", nameAm: "ልደታ", nameOm: "Lideta", latitude: 9.0122, longitude: 38.7469, createdAt: new Date() },
+      { _id: "stop-17", nameEn: "Kirkos", nameAm: "ኪርኮስ", nameOm: "Kirkos", latitude: 9.0122, longitude: 38.7469, createdAt: new Date() },
+      { _id: "stop-18", nameEn: "Arada", nameAm: "አራዳ", nameOm: "Arada", latitude: 9.0122, longitude: 38.7469, createdAt: new Date() },
+      { _id: "stop-19", nameEn: "Yeka", nameAm: "የካ", nameOm: "Yeka", latitude: 9.0122, longitude: 38.7469, createdAt: new Date() },
+      { _id: "stop-20", nameEn: "Bole Rwanda", nameAm: "ቦሌ ሩዋንዳ", nameOm: "Bole Rwanda", latitude: 8.9906, longitude: 38.7578, createdAt: new Date() },
     ];
 
     stops.forEach(stop => {
@@ -183,6 +232,26 @@ export class HybridStorage implements IStorage {
         status: "active", 
         currentLatitude: 8.9906, 
         currentLongitude: 38.7578,
+        lastUpdated: new Date(),
+        createdAt: new Date()
+      },
+      { 
+        _id: "bus-4", 
+        plateNumber: "AA-301-004", 
+        routeId: "route-3", 
+        status: "active", 
+        currentLatitude: 9.0122, 
+        currentLongitude: 38.7469,
+        lastUpdated: new Date(),
+        createdAt: new Date()
+      },
+      { 
+        _id: "bus-5", 
+        plateNumber: "AA-401-005", 
+        routeId: "route-4", 
+        status: "active", 
+        currentLatitude: 9.0122, 
+        currentLongitude: 38.7469,
         lastUpdated: new Date(),
         createdAt: new Date()
       },
@@ -311,6 +380,17 @@ export class HybridStorage implements IStorage {
     const user = { ...userData, _id: id, createdAt: new Date(), updatedAt: new Date() };
     this.memoryData.users.set(id, user);
     return user as IUser;
+  }
+
+  async getAllUsers(): Promise<IUser[]> {
+    if (this.isMongoConnected) {
+      try {
+        return await User.find();
+      } catch (error) {
+        console.log('MongoDB error, falling back to memory');
+      }
+    }
+    return Array.from(this.memoryData.users.values());
   }
 
   async getAllRoutes(): Promise<IRoute[]> {

@@ -8,6 +8,7 @@ export default function LanguageSelector() {
     { code: 'en', name: 'English' },
     { code: 'am', name: 'አማርኛ' },
     { code: 'om', name: 'Afaan Oromo' },
+    { code: 'ti', name: 'ትግርኛ' },
   ];
 
   return (

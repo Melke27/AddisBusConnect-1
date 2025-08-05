@@ -19,23 +19,29 @@ export const connectDB = async () => {
 // User Interface and Schema
 export interface IUser extends Document {
   _id: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
   profileImageUrl?: string;
   role: 'passenger' | 'admin';
   preferredLanguage: 'en' | 'am' | 'om';
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const userSchema = new Schema<IUser>({
-  email: { type: String, unique: true, sparse: true },
-  firstName: String,
-  lastName: String,
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
   profileImageUrl: String,
   role: { type: String, enum: ['passenger', 'admin'], default: 'passenger' },
   preferredLanguage: { type: String, enum: ['en', 'am', 'om'], default: 'en' },
+  passwordResetToken: String,
+  passwordResetExpires: Date,
 }, { timestamps: true });
 
 export const User = mongoose.model<IUser>('User', userSchema);
@@ -177,6 +183,29 @@ const sessionSchema = new Schema<ISession>({
 });
 
 export const Session = mongoose.model<ISession>('Session', sessionSchema);
+
+// Authentication Schemas
+export const registerSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  preferredLanguage: z.enum(['en', 'am', 'om']).default('en'),
+});
+
+export const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
+});
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string(),
+  password: z.string().min(6),
+});
 
 // Validation Schemas
 export const insertUserSchema = z.object({

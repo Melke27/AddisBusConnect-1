@@ -44,11 +44,15 @@ export const getQueryFn: <T>(options: {
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: getQueryFn({ on401: "throw" }),
+      queryFn: getQueryFn({ on401: "returnNull" }), // Changed to returnNull for local dev
       refetchInterval: false,
       refetchOnWindowFocus: false,
       staleTime: Infinity,
       retry: false,
+      // Add error handling for local development
+      onError: (error) => {
+        console.log("Query error (expected in local dev):", error);
+      },
     },
     mutations: {
       retry: false,

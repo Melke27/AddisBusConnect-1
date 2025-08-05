@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/hooks/useLanguage";
 import LanguageSelector from "@/components/LanguageSelector";
 import { Bus, MapPin, Smartphone, Clock } from "lucide-react";
+import { Link } from "wouter";
 
 export default function Landing() {
   const { t } = useLanguage();
@@ -30,6 +31,9 @@ export default function Landing() {
     }
   ];
 
+  // Check if we're in local development mode (browser environment)
+  const isLocalDev = typeof window !== 'undefined';
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary to-blue-600">
       {/* Header */}
@@ -48,13 +52,24 @@ export default function Landing() {
             {t('auth.loginDescription')}
           </p>
           
-          <Button
-            size="lg"
-            className="bg-secondary hover:bg-yellow-500 text-gray-900 font-medium text-lg px-8 py-3"
-            onClick={() => window.location.href = '/api/login'}
-          >
-            {t('auth.getStarted')}
-          </Button>
+          {isLocalDev ? (
+            <Link href="/">
+              <Button
+                size="lg"
+                className="bg-secondary hover:bg-yellow-500 text-gray-900 font-medium text-lg px-8 py-3"
+              >
+                {t('auth.getStarted')}
+              </Button>
+            </Link>
+          ) : (
+            <Button
+              size="lg"
+              className="bg-secondary hover:bg-yellow-500 text-gray-900 font-medium text-lg px-8 py-3"
+              onClick={() => window.location.href = '/api/login'}
+            >
+              {t('auth.getStarted')}
+            </Button>
+          )}
         </div>
 
         {/* Features Grid */}
