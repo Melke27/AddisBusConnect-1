@@ -1,9 +1,21 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as GitHubStrategy } from 'passport-github2';
+import crypto from 'crypto';
 import { storage } from './storage';
 import { generateToken, hashPassword } from './auth';
 import { User } from '@shared/schema';
+
+// Helper function to convert user to Passport user type
+function toPassportUser(user: any) {
+  return {
+    id: user._id?.toString() || user.id,
+    email: user.email,
+    name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email.split('@')[0],
+    role: user.role || 'passenger',
+    avatar: user.profileImageUrl
+  };
+}
 
 // Google OAuth Strategy
 passport.use(new GoogleStrategy({
@@ -15,27 +27,33 @@ passport.use(new GoogleStrategy({
   async (accessToken, refreshToken, profile, done) => {
     try {
       // Check if user exists
-      let user = await storage.user.findUnique({
-        where: { email: profile.emails?.[0].value }
-      });
+      const email = profile.emails?.[0]?.value;
+      if (!email) {
+        return done(new Error('No email provided by the OAuth provider'), undefined);
+      }
+
+      let user = await storage.getUserByEmail(email);
 
       // If user doesn't exist, create a new one
       if (!user) {
         const username = profile.displayName.toLowerCase().replace(/\s+/g, '_');
-        user = await storage.user.create({
-          data: {
-            email: profile.emails?.[0].value || '',
-            name: profile.displayName,
-            username,
-            password: await hashPassword(crypto.randomBytes(16).toString('hex')), // Random password
-            role: 'USER',
-            emailVerified: true,
-            avatar: profile.photos?.[0].value
-          }
-        });
+        const newUser = {
+          email,
+          firstName: profile.name?.givenName || profile.displayName.split(' ')[0],
+          lastName: profile.name?.familyName || profile.displayName.split(' ').slice(1).join(' ') || 'User',
+          password: await hashPassword(crypto.randomBytes(16).toString('hex')), // Random password
+          preferredLanguage: 'en' as const,
+          role: 'passenger' as const,
+          profileImageUrl: profile.photos?.[0]?.value,
+          // Optional fields with default values
+          passwordResetToken: undefined,
+          passwordResetExpires: undefined
+        };
+        
+        user = await storage.upsertUser(newUser);
       }
 
-      return done(null, user);
+      return done(null, toPassportUser(user));
     } catch (error) {
       return done(error as Error, undefined);
     }
@@ -52,33 +70,34 @@ passport.use(new GitHubStrategy({
   async (accessToken: any, refreshToken: any, profile: any, done: any) => {
     try {
       // Get the primary email from GitHub
-      const email = profile.emails?.[0].value;
+      const email = profile.emails?.[0]?.value;
       if (!email) {
         return done(new Error('No email found from GitHub'), undefined);
       }
 
       // Check if user exists
-      let user = await storage.user.findUnique({
-        where: { email }
-      });
+      let user = await storage.getUserByEmail(email);
 
       // If user doesn't exist, create a new one
       if (!user) {
         const username = profile.username || profile.displayName.toLowerCase().replace(/\s+/g, '_');
-        user = await storage.user.create({
-          data: {
-            email,
-            name: profile.displayName || profile.username,
-            username,
-            password: await hashPassword(crypto.randomBytes(16).toString('hex')), // Random password
-            role: 'USER',
-            emailVerified: true,
-            avatar: profile.photos?.[0]?.value
-          }
-        });
+        const newUser = {
+          email,
+          firstName: profile.displayName?.split(' ')[0] || profile.username,
+          lastName: profile.displayName?.split(' ').slice(1).join(' ') || 'User',
+          password: await hashPassword(crypto.randomBytes(16).toString('hex')), // Random password
+          preferredLanguage: 'en' as const,
+          role: 'passenger' as const,
+          profileImageUrl: profile.photos?.[0]?.value,
+          // Optional fields with default values
+          passwordResetToken: undefined,
+          passwordResetExpires: undefined
+        };
+        
+        user = await storage.upsertUser(newUser);
       }
 
-      return done(null, user);
+      return done(null, toPassportUser(user));
     } catch (error) {
       return done(error as Error, undefined);
     }
@@ -87,14 +106,18 @@ passport.use(new GitHubStrategy({
 
 // Serialize user into the session
 passport.serializeUser((user: any, done) => {
-  done(null, user.id);
+  done(null, user._id || user.id);
 });
 
 // Deserialize user from the session
 passport.deserializeUser(async (id: string, done) => {
   try {
-    const user = await storage.user.findUnique({ where: { id } });
-    done(null, user);
+    const user = await storage.getUser(id);
+    if (user) {
+      done(null, toPassportUser(user));
+    } else {
+      done(new Error('User not found'), null);
+    }
   } catch (error) {
     done(error, null);
   }

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import EnhancedLiveMap from '@/components/EnhancedLiveMap';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Bus, Clock, MapPin, Users } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import GoogleMapsComponent from '@/components/GoogleMapsComponent';
+import RouteSearch from '@/components/RouteSearch';
+import { Button } from '@/components/ui/button';
+import { Search, MapPin, Bus, Clock, Users } from 'lucide-react';
 
 export default function LiveTrackingPage() {
   const [activeTab, setActiveTab] = useState('map');
@@ -20,13 +22,43 @@ export default function LiveTrackingPage() {
     { id: 's3', name: 'Arat Kilo', distance: '2.1 km', routes: ['3', '5'] },
   ];
 
+  const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number } | null>(null);
+
+  const handlePlaceSelect = (place: google.maps.places.PlaceResult | null) => {
+    setSelectedPlace(place);
+    if (place?.geometry?.location) {
+      setMapCenter({
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      });
+    }
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Live Bus Tracking</h1>
-        <p className="text-gray-600 mt-2">
-          Track buses in real-time and get accurate arrival predictions
-        </p>
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6">Live Bus Tracking</h1>
+      
+      <div className="mb-6">
+        <RouteSearch 
+          onSelectPlace={handlePlaceSelect} 
+          placeholder="Search for a location, bus stop, or address..."
+          className="w-full max-w-2xl mx-auto"
+        />
+        
+        {selectedPlace && (
+          <div className="mt-4 p-4 bg-blue-50 rounded-md border border-blue-200">
+            <div className="flex items-start">
+              <MapPin className="h-5 w-5 text-blue-500 mt-0.5 mr-2 flex-shrink-0" />
+              <div>
+                <h3 className="font-medium text-blue-900">{selectedPlace.name}</h3>
+                {selectedPlace.formatted_address && (
+                  <p className="text-sm text-blue-700">{selectedPlace.formatted_address}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <Tabs 
@@ -41,33 +73,26 @@ export default function LiveTrackingPage() {
         </TabsList>
 
         <TabsContent value="map">
-          <EnhancedLiveMap />
+          <div className="h-[600px] rounded-lg overflow-hidden border">
+            <GoogleMapsComponent center={mapCenter} />
+          </div>
         </TabsContent>
 
         <TabsContent value="routes">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {popularRoutes.map((route) => (
               <Card key={route.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center space-x-2">
-                    <Bus className="h-5 w-5 text-blue-600" />
-                    <CardTitle className="text-lg">{route.name}</CardTitle>
-                  </div>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>{route.name}</span>
+                    <span className="text-sm font-normal text-gray-500">{route.buses} buses</span>
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Users className="h-4 w-4 mr-2" />
-                      <span>{route.buses} active buses</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Clock className="h-4 w-4 mr-2" />
-                      <span>Next bus in {route.nextBus}</span>
-                    </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <Clock className="h-4 w-4 mr-2" />
+                    Next bus in {route.nextBus}
                   </div>
-                  <button className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
-                    View on Map
-                  </button>
                 </CardContent>
               </Card>
             ))}
@@ -78,23 +103,22 @@ export default function LiveTrackingPage() {
           <div className="space-y-4">
             {nearbyStops.map((stop) => (
               <Card key={stop.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center space-x-2">
-                    <MapPin className="h-5 w-5 text-red-600" />
-                    <CardTitle className="text-lg">{stop.name}</CardTitle>
-                  </div>
-                  <p className="text-sm text-gray-500">{stop.distance} away</p>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {stop.routes.map((route) => (
-                      <span 
-                        key={route} 
-                        className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full"
-                      >
-                        Route {route}
-                      </span>
-                    ))}
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-medium">{stop.name}</h3>
+                      <p className="text-sm text-gray-500">{stop.distance} away</p>
+                    </div>
+                    <div className="flex space-x-1">
+                      {stop.routes.map((route) => (
+                        <span 
+                          key={route} 
+                          className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800"
+                        >
+                          {route}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                   <button className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
                     View Arrivals

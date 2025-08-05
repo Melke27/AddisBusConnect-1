@@ -1,12 +1,12 @@
-import * as client from "openid-client";
-import { Strategy, type VerifyFunction } from "openid-client/passport";
-
-import passport from "passport";
-import session from "express-session";
-import type { Express, RequestHandler } from "express";
-import memoize from "memoizee";
-import MongoStore from "connect-mongo";
-import { storage } from "./storage";
+import { Issuer, Strategy, type TokenSet, type VerifyCallback } from 'openid-client';
+import type { Strategy as PassportStrategy } from 'passport';
+import passport from 'passport';
+import session from 'express-session';
+import type { Express, Request, Response, NextFunction } from 'express';
+import memoize from 'memoizee';
+import MongoStore from 'connect-mongo';
+import { storage } from './storage';
+import { User } from '@shared/schema';
 
 // Check if we're in a local development environment
 const isLocalDev = !process.env.REPLIT_DOMAINS;

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
-import LoginForm from '@/components/auth/LoginForm';
-import SignupForm from '@/components/auth/SignupForm';
-import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm';
-import ResetPasswordForm from '@/components/auth/ResetPasswordForm';
+import LoginForm from '../components/auth/LoginForm';
+import SignupForm from '../components/auth/SignupForm';
+import ForgotPasswordForm from '../components/auth/ForgotPasswordForm';
+import ResetPasswordForm from '../components/auth/ResetPasswordForm';
 
 type AuthMode = 'login' | 'signup' | 'forgot-password' | 'reset-password';
 

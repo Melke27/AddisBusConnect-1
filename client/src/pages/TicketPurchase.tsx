@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import Navigation from "@/components/Navigation";
-import QRCode from "@/components/QRCode";
-import type { Route, Ticket } from "@shared/schema";
+import { useLanguage } from "../hooks/useLanguage";
+import { useToast } from "../hooks/use-toast";
+import { apiRequest } from "../lib/queryClient";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { Label } from "../components/ui/label";
+import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
+import Navigation from "../components/Navigation";
+import QRCode from "../components/QRCode";
+import type { Route, Ticket } from "../shared/schema";
 import { 
   ArrowLeft, 
   Ticket as TicketIcon, 

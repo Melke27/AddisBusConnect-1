@@ -1,0 +1,76 @@
+{
+  "appName": "ኣዲስ ባስ ኮነክት",
+  "nav": {
+    "home": "መበገሲ",
+    "routes": "መስመራት",
+    "tracking": "ምክትታል",
+    "calculator": "ካልኩሌተር",
+    "profile": "ፕሮፋይል",
+    "feedback": "ርእይቶ"
+  },
+  "home": {
+    "title": "ናብ ኣዲስ ባስ ኮነክት ብደሓን መጻእኩም!",
+    "subtitle": "ኣብ ኣዲስ ኣበባ ዚርከብ መጓዓዝያ መፍትሒኩም",
+    "searchPlaceholder": "መስመራት፣ መደወሊታት፣ ወይ መድረሻታት ምድላው...",
+    "quickActions": "ቕልጡፍ ተግባራት",
+    "viewRoutes": "መስመራት ርኣዩ",
+    "buyTicket": "ትኬት ግዛእ",
+    "trackBus": "ባስ ምክትታል"
+  },
+  "routes": {
+    "title": "መስመራት ባስ",
+    "searchPlaceholder": "መስመራት ምድላው...",
+    "noRoutes": "መስመር ኣይተረኽበን",
+    "viewDetails": "ዝርዝር ርኣዩ",
+    "price": "ዋጋ",
+    "frequency": "ተደጋጋሚ",
+    "active": "ንጡፍ",
+    "inactive": "ዕረፍቲ ኣለዎ"
+  },
+  "tracking": {
+    "title": "ቕጫለ ግዜ ምክትታል ባስ",
+    "live": "ቀጫር",
+    "myLocation": "ኣብየት ዘለኹሉ",
+    "traffic": "ትራፊክ",
+    "fullScreen": "ምሉእ ስክሪን"
+  },
+  "calculator": {
+    "title": "ዋጋ ምሕሳብ",
+    "from": "�ቐስቲ",
+    "to": "ናብ",
+    "calculate": "ሕሳብ ግበር",
+    "reset": "ንጹር",
+    "fare": "ዋጋ",
+    "duration": "ግዜ",
+    "distance": "ርሕቀት",
+    "selectStops": "በጃኹም መጀመርታን መወዳእታን ምረጹ"
+  },
+  "profile": {
+    "title": "መግለጺ ተጠቃሚ",
+    "personalInfo": "ውልቃዊ ሓበሬታ",
+    "savedRoutes": "ዝተቐምጥሎም መስመራት",
+    "ticketHistory": "ዝሓለፉ ትኬታት",
+    "settings": "ቅንብርታት",
+    "editProfile": "ፕሮፋይል ኣስተኻኽል",
+    "changePassword": "መሕለፊ ቃል ቀይር",
+    "logout": "ውጸ"
+  },
+  "feedback": {
+    "title": "ርእይቶን ሓገዝን",
+    "message": "መልእኽቲ",
+    "send": "ልኣክ",
+    "success": "ርእይቶኩም ተልኢሉ ኣሎ!"
+  },
+  "common": {
+    "loading": "ተጻዊሩ ኣሎ...",
+    "error": "ጌጋ",
+    "success": "ተሳክሩ",
+    "cancel": "ዕቁብ",
+    "save": "ዓቅር",
+    "delete": "ሰርዝ",
+    "edit": "ምምሕዳር",
+    "view": "ርአ",
+    "search": "ድለ",
+    "back": "ንድሕሪት"
+  }
+}

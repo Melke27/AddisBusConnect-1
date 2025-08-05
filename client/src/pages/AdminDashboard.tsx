@@ -1,20 +1,21 @@
 import { useState } from 'react';
 import { useQuery } from "@tanstack/react-query";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import Navigation from "@/components/Navigation";
-import { LocationManagement } from "@/components/admin/LocationManagement";
-import type { IBus, ITicket, IUser, IRoute, IStop } from "@shared/schema";
+import { useLanguage } from "../hooks/useLanguage";
+import { useAuth } from "../hooks/useAuth";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Badge } from "../components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { Textarea } from "../components/ui/textarea";
+import { useToast } from "../components/ui/use-toast";
+import Navigation from "../components/Navigation";
+import { LocationManagement } from "../components/admin/LocationManagement";
+import type { IBus, ITicket, IUser, IRoute, IStop } from "../shared/schema";
 import { 
   ArrowLeft, 
   BarChart3, 

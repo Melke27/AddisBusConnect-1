@@ -24,6 +24,7 @@ import mongoose from 'mongoose';
 export interface IStorage {
   // User operations (required for Replit Auth)
   getUser(id: string): Promise<IUser | null>;
+  getUserByEmail(email: string): Promise<IUser | null>;
   upsertUser(user: UpsertUser): Promise<IUser>;
   getAllUsers(): Promise<IUser[]>;
   
@@ -349,13 +350,64 @@ export class HybridStorage implements IStorage {
 
   async getUser(id: string): Promise<IUser | null> {
     if (this.isMongoConnected) {
-      try {
-        return await User.findById(id);
-      } catch (error) {
-        console.log('MongoDB error, falling back to memory');
-      }
+      return await User.findById(id).lean().exec();
     }
     return this.memoryData.users.get(id) || null;
+  }
+
+  async getUserByEmail(email: string): Promise<IUser | null> {
+    if (this.isMongoConnected) {
+      return await User.findOne({ email }).lean().exec();
+    }
+    
+    // Search in memory
+    for (const user of this.memoryData.users.values()) {
+      if (user.email.toLowerCase() === email.toLowerCase()) {
+        return user;
+      }
+    }
+    return null;
+  }
+
+  async upsertUser(userData: UpsertUser): Promise<IUser> {
+    if (this.isMongoConnected) {
+      if (userData.id) {
+        // Update existing user
+        const updatedUser = await User.findByIdAndUpdate(
+          userData.id,
+          { $set: userData },
+          { new: true, upsert: true }
+        ).lean().exec();
+        return updatedUser as IUser;
+      } else {
+        // Create new user
+        const newUser = new User(userData);
+        await newUser.save();
+        return newUser.toObject();
+      }
+    }
+
+    // In-memory implementation
+    if (userData.id && this.memoryData.users.has(userData.id)) {
+      // Update existing user
+      const updatedUser = {
+        ...this.memoryData.users.get(userData.id),
+        ...userData,
+        updatedAt: new Date()
+      };
+      this.memoryData.users.set(userData.id, updatedUser);
+      return updatedUser;
+    } else {
+      // Create new user
+      const newUser = {
+        ...userData,
+        _id: userData.id || `user-${Date.now()}`,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      this.memoryData.users.set(newUser._id, newUser);
+      return newUser;
+    }
   }
 
   async upsertUser(userData: UpsertUser): Promise<IUser> {

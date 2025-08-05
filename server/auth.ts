@@ -5,6 +5,15 @@ import { storage } from './storage';
 import { User, type IUser } from '@shared/schema';
 import type { Request, Response, NextFunction } from 'express';
 
+// Extend the Express Request interface to include the user property
+declare global {
+  namespace Express {
+    interface Request {
+      user?: IUser;
+    }
+  }
+}
+
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 const JWT_EXPIRES_IN = '7d';
 
@@ -112,15 +121,18 @@ export const signup = async (req: Request, res: Response) => {
     // Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Create user
-    const user = await storage.upsertUser({
+    // Create user object matching UpsertUser type
+    const userData = {
       email,
       password: hashedPassword,
       firstName,
       lastName,
-      preferredLanguage,
-      role: 'passenger'
-    });
+      preferredLanguage: preferredLanguage as 'en' | 'am' | 'om',
+      role: 'passenger' as const
+    };
+
+    // Create user
+    const user = await storage.upsertUser(userData);
 
     // Generate token
     const token = generateToken(user._id.toString(), user.role);

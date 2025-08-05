@@ -258,6 +258,19 @@ export const insertTicketSchema = z.object({
   amount: z.number().positive(),
 });
 
+// User Schema
+export const insertUserSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+  preferredLanguage: z.enum(['en', 'am', 'om']).default('en'),
+  role: z.enum(['passenger', 'admin']).default('passenger'),
+  profileImageUrl: z.string().optional(),
+  passwordResetToken: z.string().optional(),
+  passwordResetExpires: z.date().optional()
+});
+
 // Types
 export type UpsertUser = z.infer<typeof insertUserSchema> & { id?: string };
 export type InsertRoute = z.infer<typeof insertRouteSchema>;

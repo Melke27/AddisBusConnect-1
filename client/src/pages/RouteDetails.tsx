@@ -1,13 +1,13 @@
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { useLanguage } from "@/hooks/useLanguage";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Separator } from "../components/ui/separator";
+import { useLanguage } from "../hooks/useLanguage";
 import { Clock, MapPin, Bus, Users, DollarSign, Calendar } from "lucide-react";
 import { Link } from "wouter";
-import LiveMap from "@/components/LiveMap";
+import LiveMap from "../components/LiveMap";
 
 interface Route {
   _id: string;

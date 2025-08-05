@@ -1,0 +1,76 @@
+{
+  "appName": "አዲስ ቡስ ኮነክት",
+  "nav": {
+    "home": "መነሻ",
+    "routes": "መስመሮች",
+    "tracking": "ክትትል",
+    "calculator": "ካልኩሌተር",
+    "profile": "መገለጫ",
+    "feedback": "ግብረ ሃሳብ"
+  },
+  "home": {
+    "title": "ወደ አዲስ ቡስ ኮነክት እንኳን በደለሁት!",
+    "subtitle": "በአዲስ አበባ ውስጥ የባቡር መጓዣ መፍትሄዎ",
+    "searchPlaceholder": "መስመሮችን፣ መናሸሻዎችን ወይም መድረሻዎችን ይፈልጉ...",
+    "quickActions": "ፈጣን እርምጃዎች",
+    "viewRoutes": "መስመሮችን ይመልከቱ",
+    "buyTicket": "ትኬት ይግዙ",
+    "trackBus": "ባቡርን ይከታተሉ"
+  },
+  "routes": {
+    "title": "የባቡር መስመሮች",
+    "searchPlaceholder": "መስመሮችን ይፈልጉ...",
+    "noRoutes": "ምንም መስመር አልተገኘም",
+    "viewDetails": "ዝርዝሮችን ይመልከቱ",
+    "price": "ዋጋ",
+    "frequency": "መደጋገም",
+    "active": "ንቁ",
+    "inactive": "እረፍት ላይ"
+  },
+  "tracking": {
+    "title": "በቀጥታ የባቡር ክትትል",
+    "live": "ቀጥታ",
+    "myLocation": "የእኔ አካባቢ",
+    "traffic": "ትራፊክ",
+    "fullScreen": "ሙሉ ስክሪን"
+  },
+  "calculator": {
+    "title": "ክፍያ ማስላት",
+    "from": "ከ",
+    "to": "ወደ",
+    "calculate": "አስላ",
+    "reset": "አስቀምጥ",
+    "fare": "ክፍያ",
+    "duration": "ጊዜ",
+    "distance": "ርቀት",
+    "selectStops": "እባክዎ መነሻ እና መድረሻ ይምረጡ"
+  },
+  "profile": {
+    "title": "የተጠቃሚ መገለጫ",
+    "personalInfo": "የግል መረጃ",
+    "savedRoutes": "የተቀመጡ መስመሮች",
+    "ticketHistory": "የትኬት ታሪክ",
+    "settings": "ማስተካከያዎች",
+    "editProfile": "መገለጫ አስተካክል",
+    "changePassword": "የይለፍ ቃል ይቀይሩ",
+    "logout": "ውጣ"
+  },
+  "feedback": {
+    "title": "ግብረ ሀሳብ እና ድጋፍ",
+    "message": "መልእክት",
+    "send": "ላክ",
+    "success": "ግብረ ሀሳብዎ ተልኳል!"
+  },
+  "common": {
+    "loading": "በመጫን ላይ...",
+    "error": "ስህተት",
+    "success": "ተሳክቷል",
+    "cancel": "ሰርዝ",
+    "save": "አስቀምጥ",
+    "delete": "ሰርዝ",
+    "edit": "አስተካክል",
+    "view": "ይመልከቱ",
+    "search": "ፈልግ",
+    "back": "ተመለስ"
+  }
+}

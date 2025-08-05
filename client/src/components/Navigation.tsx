@@ -1,9 +1,9 @@
 import { Link, useLocation } from "wouter";
-import { useAuth } from "@/hooks/useAuth";
-import { useLanguage } from "@/hooks/useLanguage";
-import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
+import { useAuth } from "../hooks/useAuth";
+import { useLanguage } from "../hooks/useLanguage";
+import { Button } from "./ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Badge } from "./ui/badge";
 import LanguageSelector from "./LanguageSelector";
 import { Bus, Bell, User, Home, Map, Ticket, UserIcon, Calendar, Settings, LogOut, Shield, ChevronDown, MapPin, Radar } from "lucide-react";
 

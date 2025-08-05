@@ -1,10 +1,97 @@
 {
   "appName": "አዲስ ቡስ ኮነክት",
-  "navigation": {
+  "nav": {
     "home": "መነሻ",
-    "map": "ካርታ",
+    "routes": "መስመሮች",
+    "tracking": "ክትትል",
+    "calculator": "ካልኩሌተር",
+    "profile": "መገለጫ",
+    "feedback": "ግብረ መልስ",
+    "schedule": "መርሐ ግብር",
     "tickets": "ትኬቶች",
-    "profile": "መገለጫ"
+    "admin": "አስተዳዳሪ",
+    "login": "ግባ",
+    "logout": "ውጣ"
+  },
+  "home": {
+    "title": "ወደ አዲስ ቡስ ኮነክት እንኳን በደለሁት!",
+    "subtitle": "በአዲስ አበባ ውስጥ የባቡር መጓዣ መፍትሄዎ",
+    "searchPlaceholder": "መስመሮችን፣ መናሸሻዎችን ወይም መድረሻዎችን ይፈልጉ...",
+    "quickActions": "ፈጣን እርምጃዎች",
+    "viewRoutes": "መስመሮችን ይመልከቱ",
+    "buyTicket": "ትኬት ይግዙ",
+    "trackBus": "ባቡርን ይከታተሉ",
+    "schedule": "መርሐ ግብር",
+    "features": "ዋና ባህሪያት",
+    "realTimeTracking": "በቅጽበት የባቡር ክትትል",
+    "qrTickets": "QR ኮድ ትኬቶች",
+    "multiLanguage": "ባለብዙ ቋንቋዎች ድጋፍ",
+    "voiceGuide": "ድምፅ መመሪያ",
+    "communityFeedback": "የማህበረሰብ አስተያየት"
+  },
+  "routes": {
+    "title": "የባቡር መስመሮች",
+    "searchPlaceholder": "መስመሮችን ይፈልጉ...",
+    "noRoutes": "ምንም መስመር አልተገኘም",
+    "viewDetails": "ዝርዝሮችን ይመልከቱ",
+    "buyTicket": "ትኬት ይግዙ",
+    "schedule": "መርሐ ግብር",
+    "price": "ዋጋ",
+    "frequency": "መደጋገም",
+    "active": "ንቁ",
+    "inactive": "እረፍት ላይ",
+    "popular": "ተወዳጅ መንገዶች",
+    "next": "ቀጣይ",
+    "minutes": "ደቂቃዎች",
+    "every": "በየ"
+  },
+  "liveTracking": {
+    "title": "በቀጥታ የባቡር ክትትል",
+    "live": "ቀጥታ",
+    "myLocation": "የእኔ አካባቢ",
+    "traffic": "ትራፊክ",
+    "fullScreen": "ሙሉ ስክሪን"
+  },
+  "fareCalculator": {
+    "title": "ክፍያ ማስላት",
+    "from": "ከ",
+    "to": "ወደ",
+    "calculate": "አስላ",
+    "reset": "አስቀምጥ",
+    "fare": "ክፍያ",
+    "duration": "ጊዜ",
+    "distance": "ርቀት",
+    "selectStops": "እባክዎ መነሻ እና መድረሻ ይምረጡ"
+  },
+  "profile": {
+    "title": "የተጠቃሚ መገለጫ",
+    "personalInfo": "የግል መረጃ",
+    "savedRoutes": "የተቀመጡ መስመሮች",
+    "ticketHistory": "የትኬት ታሪክ",
+    "settings": "ማስተካከያዎች",
+    "editProfile": "መገለጫ አስተካክል",
+    "changePassword": "የይለፍ ቃል ይቀይሩ",
+    "logout": "ውጣ"
+  },
+  "feedback": {
+    "title": "ግብረ ሀሳብ እና ድጋፍ",
+    "feedback": "ግብረ ሀሳብ",
+    "support": "ድጋፍ",
+    "faq": "ተደጋግሞ የሚነሱ ጥያቄዎች",
+    "contactUs": "ያግኙን",
+    "submit": "ላክ"
+  },
+  "auth": {
+    "login": "ግባ",
+    "signUp": "ተመዝገብ",
+    "logout": "ውጣ",
+    "email": "ኢሜይል",
+    "password": "የይለፍ ቃል",
+    "firstName": "የመጀመሪያ ስም",
+    "lastName": "የአባት ስም",
+    "confirmPassword": "የይለፍ ቃል አረጋግጥ",
+    "forgotPassword": "የይለፍ ቃል ረሳኽው?",
+    "rememberMe": "አስታውሰኝ"
   },
   "search": {
     "title": "አውቶቡስዎን ይፈልጉ",

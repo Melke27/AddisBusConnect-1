@@ -1,23 +1,23 @@
 import { useState } from "react";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useLanguage } from "../hooks/useLanguage";
+import { useAuth } from "../hooks/useAuth";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
-import Navigation from "@/components/Navigation";
+} from "../components/ui/select";
+import { Switch } from "../components/ui/switch";
+import { Separator } from "../components/ui/separator";
+import Navigation from "../components/Navigation";
 import { User, Settings, Heart, Bell, Volume2, MapPin, Clock, Save } from "lucide-react";
 import type { IUser } from "@shared/schema";
-import RoutePlanner from "@/components/RoutePlanner";
+import RoutePlanner from "../components/RoutePlanner";
 
 export default function UserProfile() {
   const { t, language, changeLanguage } = useLanguage();

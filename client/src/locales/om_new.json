@@ -1,0 +1,76 @@
+{
+  "appName": "AddisBus Connect",
+  "nav": {
+    "home": "Mana",
+    "routes": "Karaalee",
+    "tracking": "Hordoffii",
+    "calculator": "Lakkoofsa",
+    "profile": "Profaayilii",
+    "feedback": "Yaada"
+  },
+  "home": {
+    "title": "Baga AddisBus Connect seenanii ooltan!",
+    "subtitle": "Karaa Konkolaataa Addis Ababaa keessatti furmaata keessan",
+    "searchPlaceholder": "Karaalee, dhaabbilee, ykn iddoo deempituu barbaadi...",
+    "quickActions": "Tarkaanfii Dafan",
+    "viewRoutes": "Karaalee ilaali",
+    "buyTicket": "Tikeetii bitadhu",
+    "trackBus": "Konkolaata hordofi"
+  },
+  "routes": {
+    "title": "Karaalee Konkolaataa",
+    "searchPlaceholder": "Karaalee barbaadi...",
+    "noRoutes": "Karaa hin argamne",
+    "viewDetails": "Ilaalcha keessaniif",
+    "price": "Gatii",
+    "frequency": "Yeroo yeroo",
+    "active": "Hojii irra jira",
+    "inactive": "Hojii dhabe"
+  },
+  "tracking": {
+    "title": "Hordoffii Konkolaataa Haqaa",
+    "live": "Haqaadha",
+    "myLocation": "Bakkuma koo",
+    "traffic": "Dhaabbilee",
+    "fullScreen": "Fuula Guutuu"
+  },
+  "calculator": {
+    "title": "Gatii Herregaa",
+    "from": "Irrraa",
+    "to": "Gara",
+    "calculate": "Hiriyyii",
+    "reset": "Haala jalqabaa galchi",
+    "fare": "Gatii",
+    "duration": "Yeroo",
+    "distance": "Fageenya",
+    "selectStops": "Mee dhaabbilee fili"
+  },
+  "profile": {
+    "title": "Profaayilii Keessan",
+    "personalInfo": "Odeeffannoo Dhuumanaa",
+    "savedRoutes": "Karaalee Dubbisoo Ta'an",
+    "ticketHistory": "Seenaa Tikeetii",
+    "settings": "Sirrummaa",
+    "editProfile": "Profaayilii Sirreessi",
+    "changePassword": "Jecha Iccitii Jijjiiri",
+    "logout": "Ba'i"
+  },
+  "feedback": {
+    "title": "Yaada fi Gargaarsa",
+    "message": "Ergaa",
+    "send": "Ergi",
+    "success": "Yaada keessan erga'eera!"
+  },
+  "common": {
+    "loading": "Akkuma itti fufiinsa...",
+    "error": "Dogoggora",
+    "success": "Milkaa'e",
+    "cancel": "Haqi",
+    "save": "Qusadhu",
+    "delete": "Haaluu",
+    "edit": "Sirreessi",
+    "view": "Ilaali",
+    "search": "Barbaadi",
+    "back": "Dugdaa"
+  }
+}

@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useLanguage } from "@/hooks/useLanguage";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import Navigation from "@/components/Navigation";
+import { useLanguage } from "../hooks/useLanguage";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Badge } from "../components/ui/badge";
+import { Separator } from "../components/ui/separator";
+import Navigation from "../components/Navigation";
 import { Car, Phone, MapPin, Clock, Star, ExternalLink, Navigation as NavigationIcon } from "lucide-react";
 
 interface RideOption {
