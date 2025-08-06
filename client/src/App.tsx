@@ -8,6 +8,7 @@ import { AnbessaLogo, ShegerLogo, AddisBusLogo } from './components/ui/logos';
 import VoiceAssistant from './components/voice-assistant';
 import AdvancedMap from './components/maps/advanced-map';
 import ButtonGuide from './components/features/button-guide';
+import Dashboard from './pages/Dashboard';
 import { busRoutes } from './data/routes';
 import './App.css';
 
@@ -301,6 +302,12 @@ const Navigation: React.FC = () => {
               <span className="text-xs">ትኬት</span>
             </Button>
           </Link>
+          <Link href="/dashboard">
+            <Button variant={location === '/dashboard' ? 'default' : 'ghost'} size="sm" className="flex flex-col gap-1 h-auto py-2">
+              <Settings size={20} />
+              <span className="text-xs">ዳሽቦርድ</span>
+            </Button>
+          </Link>
           <Link href="/help">
             <Button variant={location === '/help' ? 'default' : 'ghost'} size="sm" className="flex flex-col gap-1 h-auto py-2">
               <HelpCircle size={20} />
@@ -320,6 +327,7 @@ const App: React.FC = () => {
       <div className="app-container">
         {/* Routes */}
         <Route path="/" component={HomePage} />
+        <Route path="/dashboard" component={Dashboard} />
         <Route path="/map">
           <div className="min-h-screen bg-gray-50 pb-16">
             <div className="container mx-auto px-4 py-4">

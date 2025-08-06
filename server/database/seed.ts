@@ -1,229 +1,263 @@
 import { db } from './supabase';
-import { busCompanies, busRoutes, busStops, routeStops, buses } from './schema';
-import { eq } from 'drizzle-orm';
+import { companies, routes, stops, buses } from './schema';
 
-// Seed data for Ethiopian bus system
+// Seed data for Ethiopian bus companies
 export async function seedDatabase() {
   try {
     console.log('🌱 Starting database seeding...');
 
     // Insert bus companies
-    console.log('📊 Seeding bus companies...');
-    const [anbessaCompany] = await db.insert(busCompanies)
-      .values([
-        {
-          nameEn: 'Anbessa City Bus',
-          nameAm: 'አንበሳ የከተማ አውቶብስ',
-          nameOm: 'Anbessa Magaalaa Awtoobusii',
-          brandColor: '#009639',
-          contactPhone: '+251911123456',
-          logoUrl: '/assets/anbessa-logo.svg',
-          isActive: true
-        },
-        {
-          nameEn: 'Sheger Bus',
-          nameAm: 'ሸገር አውቶብስ',
-          nameOm: 'Sheger Awtoobusii',
-          brandColor: '#DA020E',
-          contactPhone: '+251911654321',
-          logoUrl: '/assets/sheger-logo.svg',
-          isActive: true
-        }
-      ])
-      .returning();
-
-    // Get both companies
-    const companies = await db.select().from(busCompanies);
-    const anbessa = companies.find(c => c.nameEn === 'Anbessa City Bus');
-    const sheger = companies.find(c => c.nameEn === 'Sheger Bus');
-
-    // Insert bus stops
-    console.log('🚌 Seeding bus stops...');
-    const stopsData = [
-      { nameEn: 'Mercato', nameAm: 'መርካቶ', nameOm: 'Merkato', lat: 9.0157, lng: 38.7469, isMajor: true },
-      { nameEn: 'Piazza', nameAm: 'ፒያሳ', nameOm: 'Piiyaazaa', lat: 9.0343, lng: 38.7578, isMajor: true },
-      { nameEn: 'Arat Kilo', nameAm: 'አራት ኪሎ', nameOm: 'Afur Kilo', lat: 9.0411, lng: 38.7614, isMajor: false },
-      { nameEn: 'Mexico', nameAm: 'ሜክሲኮ', nameOm: 'Meksiko', lat: 9.0298, lng: 38.7654, isMajor: false },
-      { nameEn: 'Meskel Square', nameAm: 'መስቀል አደባባይ', nameOm: 'Finfinnee Meskel', lat: 9.0125, lng: 38.7578, isMajor: true },
-      { nameEn: 'Bole', nameAm: 'ቦሌ', nameOm: 'Bole', lat: 8.9889, lng: 38.7890, isMajor: false },
-      { nameEn: 'Bole Airport', nameAm: 'ቦሌ አውሮፕላን ማረፊያ', nameOm: 'Bole Airport', lat: 8.9789, lng: 38.7990, isMajor: true },
-      { nameEn: 'Gotera', nameAm: 'ጎተራ', nameOm: 'Gotera', lat: 9.0542, lng: 38.7025, isMajor: false },
-      { nameEn: 'Addis Ketema', nameAm: 'አዲስ ከተማ', nameOm: 'Addis Ketema', lat: 9.0089, lng: 38.7389, isMajor: false },
-      { nameEn: 'Lideta', nameAm: 'ልደታ', nameOm: 'Lideta', lat: 8.9978, lng: 38.7267, isMajor: false },
-      { nameEn: 'Kaliti', nameAm: 'ቃሊቲ', nameOm: 'Kaliti', lat: 8.9456, lng: 38.7234, isMajor: false },
-      { nameEn: 'Lafto', nameAm: 'ላፍቶ', nameOm: 'Lafto', lat: 8.9234, lng: 38.8234, isMajor: false },
-      { nameEn: 'CMC', nameAm: 'ሲኤምሲ', nameOm: 'CMC', lat: 9.0456, lng: 38.6789, isMajor: true },
-      { nameEn: 'Stadium', nameAm: 'ስታድየም', nameOm: 'Isiteediyaam', lat: 9.0012, lng: 38.7656, isMajor: true },
-      { nameEn: '4 Kilo', nameAm: '4 ኪሎ', nameOm: '4 Kilo', lat: 9.0411, lng: 38.7614, isMajor: false }
-    ];
-
-    const insertedStops = await db.insert(busStops)
-      .values(stopsData.map(stop => ({
-        nameEn: stop.nameEn,
-        nameAm: stop.nameAm,
-        nameOm: stop.nameOm,
-        coordinates: `(${stop.lng}, ${stop.lat})` as any,
-        isMajorStop: stop.isMajor,
-        addressAm: `${stop.nameAm} አካባቢ፣ አዲስ አበባ`,
-        landmarksAm: `${stop.nameAm} ማቆሚያ አጠገብ`
-      })))
-      .returning();
-
-    // Create a map for quick stop lookup
-    const stopMap = new Map(insertedStops.map(stop => [stop.nameEn, stop]));
-
-    // Insert bus routes
-    console.log('🗺️ Seeding bus routes...');
-    const routesData = [
+    await db.insert(companies).values([
       {
-        companyId: anbessa!.id,
-        routeCode: 'ANB-01',
-        nameEn: 'Mercato - Bole Airport',
-        nameAm: 'መርካቶ - ቦሌ አውሮፕላን ማረፊያ',
-        nameOm: 'Merkato - Bole Airport',
-        startPointNameEn: 'Mercato',
-        startPointNameAm: 'መርካቶ',
-        endPointNameEn: 'Bole Airport',
-        endPointNameAm: 'ቦሌ አውሮፕላን ማረፊያ',
-        startPointCoordinates: '(38.7469, 9.0157)' as any,
-        endPointCoordinates: '(38.7990, 8.9789)' as any,
-        price: '8.50',
-        distanceKm: '12.5',
-        estimatedDurationMinutes: 35,
-        frequencyMinutes: 15,
-        routeColor: '#009639'
+        id: 'anbessa',
+        nameEn: 'Anbessa City Bus',
+        nameAm: 'አንበሳ የከተማ አውቶብስ',
+        nameOm: 'Anbessa Awtoobusii Magaalaa',
+        color: '#009639', // Ethiopian green
+        contactPhone: '+251911123456',
+        contactEmail: 'info@anbessa.gov.et'
       },
       {
-        companyId: anbessa!.id,
-        routeCode: 'ANB-02',
+        id: 'sheger',
+        nameEn: 'Sheger Bus',
+        nameAm: 'ሸገር አውቶብስ',
+        nameOm: 'Sheger Awtoobusii',
+        color: '#DA020E', // Ethiopian red
+        contactPhone: '+251911654321',
+        contactEmail: 'info@sheger.gov.et'
+      }
+    ]).onConflictDoNothing();
+
+    // Insert routes for Anbessa
+    await db.insert(routes).values([
+      {
+        id: 'anbessa-01',
+        companyId: 'anbessa',
+        nameEn: 'Mercato - Bole',
+        nameAm: 'መርካቶ - ቦሌ',
+        nameOm: 'Merkato - Bole',
+        startPointName: 'Mercato',
+        startPointNameAm: 'መርካቶ',
+        startPointCoords: '(38.7469,9.0157)', 
+        endPointName: 'Bole Airport',
+        endPointNameAm: 'ቦሌ አውሮፕላን ማረፊያ',
+        endPointCoords: '(38.7990,8.9789)',
+        distance: '15.2',
+        estimatedDuration: 45,
+        price: '8.50',
+        frequency: 15,
+        startTime: '05:30',
+        endTime: '23:00',
+        color: '#009639'
+      },
+      {
+        id: 'anbessa-02',
+        companyId: 'anbessa',
         nameEn: 'Gotera - Kaliti',
         nameAm: 'ጎተራ - ቃሊቲ',
         nameOm: 'Gotera - Kaliti',
-        startPointNameEn: 'Gotera',
+        startPointName: 'Gotera',
         startPointNameAm: 'ጎተራ',
-        endPointNameEn: 'Kaliti',
+        startPointCoords: '(38.7025,9.0542)',
+        endPointName: 'Kaliti',
         endPointNameAm: 'ቃሊቲ',
-        startPointCoordinates: '(38.7025, 9.0542)' as any,
-        endPointCoordinates: '(38.7234, 8.9456)' as any,
+        endPointCoords: '(38.7234,8.9456)',
+        distance: '12.8',
+        estimatedDuration: 35,
         price: '7.00',
-        distanceKm: '8.7',
-        estimatedDurationMinutes: 28,
-        frequencyMinutes: 20,
-        routeColor: '#FFDE00'
+        frequency: 20,
+        startTime: '06:00',
+        endTime: '22:30',
+        color: '#FFDE00'
       },
       {
-        companyId: sheger!.id,
-        routeCode: 'SHG-01',
+        id: 'anbessa-03',
+        companyId: 'anbessa',
+        nameEn: 'Entoto - Lebu',
+        nameAm: 'እንጦጦ - ልቡ',
+        nameOm: 'Entoto - Lebu',
+        startPointName: 'Entoto',
+        startPointNameAm: 'እንጦጦ',
+        startPointCoords: '(38.7456,9.0989)',
+        endPointName: 'Lebu',
+        endPointNameAm: 'ልቡ',
+        endPointCoords: '(38.6789,8.8567)',
+        distance: '18.5',
+        estimatedDuration: 55,
+        price: '6.50',
+        frequency: 30,
+        startTime: '06:30',
+        endTime: '21:30',
+        color: '#32CD32'
+      }
+    ]).onConflictDoNothing();
+
+    // Insert routes for Sheger
+    await db.insert(routes).values([
+      {
+        id: 'sheger-01',
+        companyId: 'sheger',
         nameEn: 'Lafto - CMC',
         nameAm: 'ላፍቶ - ሲኤምሲ',
         nameOm: 'Lafto - CMC',
-        startPointNameEn: 'Lafto',
+        startPointName: 'Lafto',
         startPointNameAm: 'ላፍቶ',
-        endPointNameEn: 'CMC',
+        startPointCoords: '(38.8234,8.9234)',
+        endPointName: 'CMC',
         endPointNameAm: 'ሲኤምሲ',
-        startPointCoordinates: '(38.8234, 8.9234)' as any,
-        endPointCoordinates: '(38.6789, 9.0456)' as any,
+        endPointCoords: '(38.6789,9.0456)',
+        distance: '16.7',
+        estimatedDuration: 50,
         price: '9.00',
-        distanceKm: '15.2',
-        estimatedDurationMinutes: 42,
-        frequencyMinutes: 18,
-        routeColor: '#DA020E'
+        frequency: 18,
+        startTime: '05:45',
+        endTime: '22:45',
+        color: '#DA020E'
+      },
+      {
+        id: 'sheger-02',
+        companyId: 'sheger',
+        nameEn: 'Gerji - Tor Hailoch',
+        nameAm: 'ገርጂ - ቶር ሃይሎች',
+        nameOm: 'Gerji - Tor Hailoch',
+        startPointName: 'Gerji',
+        startPointNameAm: 'ገርጂ',
+        startPointCoords: '(38.8456,9.0789)',
+        endPointName: 'Tor Hailoch',
+        endPointNameAm: 'ቶር ሃይሎች',
+        endPointCoords: '(38.6234,8.9123)',
+        distance: '14.3',
+        estimatedDuration: 40,
+        price: '8.00',
+        frequency: 25,
+        startTime: '06:15',
+        endTime: '22:15',
+        color: '#4169E1'
       }
-    ];
+    ]).onConflictDoNothing();
 
-    const insertedRoutes = await db.insert(busRoutes)
-      .values(routesData)
-      .returning();
-
-    // Insert route stops
-    console.log('🛑 Seeding route stops...');
-    const routeStopData = [
-      // Anbessa Route 1: Mercato - Bole Airport
-      { routeIndex: 0, stops: ['Mercato', 'Piazza', 'Arat Kilo', 'Mexico', 'Meskel Square', 'Bole', 'Bole Airport'] },
-      // Anbessa Route 2: Gotera - Kaliti
-      { routeIndex: 1, stops: ['Gotera', 'Mercato', 'Addis Ketema', 'Lideta', 'Kaliti'] },
-      // Sheger Route 1: Lafto - CMC
-      { routeIndex: 2, stops: ['Lafto', 'Stadium', '4 Kilo', 'CMC'] }
-    ];
-
-    for (const routeData of routeStopData) {
-      const route = insertedRoutes[routeData.routeIndex];
-      for (let i = 0; i < routeData.stops.length; i++) {
-        const stopName = routeData.stops[i];
-        const stop = stopMap.get(stopName);
-        if (stop) {
-          await db.insert(routeStops).values({
-            routeId: route.id,
-            stopId: stop.id,
-            stopOrder: i + 1,
-            travelTimeFromPrevious: i === 0 ? 0 : 5 + Math.floor(Math.random() * 8) // 5-12 minutes
-          });
-        }
+    // Insert some bus stops for the first route
+    await db.insert(stops).values([
+      // Mercato - Bole route stops
+      {
+        routeId: 'anbessa-01',
+        name: 'Mercato',
+        nameAm: 'መርካቶ',
+        nameOm: 'Merkato',
+        coordinates: '(38.7469,9.0157)',
+        order: 1,
+        landmarks: ['Grand Market', 'Mercato Bus Station'],
+        facilities: ['shelter', 'lighting', 'security']
+      },
+      {
+        routeId: 'anbessa-01',
+        name: 'Piazza',
+        nameAm: 'ፒያሳ',
+        nameOm: 'Piazza',
+        coordinates: '(38.7578,9.0343)',
+        order: 2,
+        landmarks: ['Red Terror Martyrs Memorial', 'Piazza'],
+        facilities: ['shelter', 'bench']
+      },
+      {
+        routeId: 'anbessa-01',
+        name: 'Arat Kilo',
+        nameAm: 'አራት ኪሎ',
+        nameOm: 'Arat Kilo',
+        coordinates: '(38.7614,9.0411)',
+        order: 3,
+        landmarks: ['Addis Ababa University', 'Ministry of Education'],
+        facilities: ['shelter', 'lighting']
+      },
+      {
+        routeId: 'anbessa-01',
+        name: 'Mexico',
+        nameAm: 'ሜክሲኮ',
+        nameOm: 'Mexico',
+        coordinates: '(38.7654,9.0298)',
+        order: 4,
+        landmarks: ['Mexico Square', 'Telecommunications'],
+        facilities: ['shelter', 'bench', 'lighting']
+      },
+      {
+        routeId: 'anbessa-01',
+        name: 'Meskel Square',
+        nameAm: 'መስቀል አደባባይ',
+        nameOm: 'Meskel Square',
+        coordinates: '(38.7578,9.0125)',
+        order: 5,
+        landmarks: ['Meskel Square', 'Monument'],
+        facilities: ['shelter', 'bench', 'lighting', 'security']
+      },
+      {
+        routeId: 'anbessa-01',
+        name: 'Bole',
+        nameAm: 'ቦሌ',
+        nameOm: 'Bole',
+        coordinates: '(38.7890,8.9889)',
+        order: 6,
+        landmarks: ['Bole Road', 'Shopping Centers'],
+        facilities: ['shelter', 'lighting']
+      },
+      {
+        routeId: 'anbessa-01',
+        name: 'Bole Airport',
+        nameAm: 'ቦሌ አውሮፕላን ማረፊያ',
+        nameOm: 'Bole Airport',
+        coordinates: '(38.7990,8.9789)',
+        order: 7,
+        landmarks: ['Bole International Airport'],
+        facilities: ['shelter', 'bench', 'lighting', 'security', 'parking']
       }
-    }
+    ]).onConflictDoNothing();
 
-    // Insert sample buses
-    console.log('🚌 Seeding buses...');
-    const busData = [];
-    for (let i = 0; i < insertedRoutes.length; i++) {
-      const route = insertedRoutes[i];
-      // Add 2-3 buses per route
-      for (let j = 0; j < (2 + Math.floor(Math.random() * 2)); j++) {
-        busData.push({
-          routeId: route.id,
-          plateNumber: `ET-${route.routeCode}-${String(j + 1).padStart(3, '0')}`,
-          busNumber: `${route.routeCode.split('-')[1]}${j + 1}`,
-          capacity: 45 + Math.floor(Math.random() * 15), // 45-60 capacity
-          accessibilityEnabled: Math.random() > 0.7,
-          wifiEnabled: Math.random() > 0.5,
-          airConditioning: Math.random() > 0.6,
-          isActive: true,
-          isInService: Math.random() > 0.3 // 70% in service
-        });
+    // Insert some buses
+    await db.insert(buses).values([
+      {
+        routeId: 'anbessa-01',
+        plateNumber: 'ET-ANB-1234',
+        capacity: 50,
+        currentCapacity: 32,
+        currentLocation: '(38.7578,9.0125)', // Meskel Square
+        speed: '25.5',
+        heading: 90,
+        estimatedArrival: 5,
+        status: 'active',
+        driverName: 'አበበ ከበደ',
+        driverPhone: '+251911223344'
+      },
+      {
+        routeId: 'anbessa-01',
+        plateNumber: 'ET-ANB-5678',
+        capacity: 50,
+        currentCapacity: 28,
+        currentLocation: '(38.7890,8.9889)', // Bole
+        speed: '30.0',
+        heading: 180,
+        estimatedArrival: 8,
+        status: 'active',
+        driverName: 'መስፍን ሃይሉ',
+        driverPhone: '+251911445566'
+      },
+      {
+        routeId: 'sheger-01',
+        plateNumber: 'ET-SHG-9012',
+        capacity: 45,
+        currentCapacity: 20,
+        currentLocation: '(38.8089,8.9567)', // Megenagna
+        speed: '28.0',
+        heading: 270,
+        estimatedArrival: 12,
+        status: 'active',
+        driverName: 'ታደሰ አለሙ',
+        driverPhone: '+251911667788'
       }
-    }
-
-    await db.insert(buses).values(busData);
+    ]).onConflictDoNothing();
 
     console.log('✅ Database seeding completed successfully!');
-    console.log(`   - ${companies.length} bus companies`);
-    console.log(`   - ${insertedStops.length} bus stops`);
-    console.log(`   - ${insertedRoutes.length} bus routes`);
-    console.log(`   - ${busData.length} buses`);
-
-    return {
-      success: true,
-      message: 'Database seeded successfully',
-      stats: {
-        companies: companies.length,
-        stops: insertedStops.length,
-        routes: insertedRoutes.length,
-        buses: busData.length
-      }
-    };
-
+    return true;
   } catch (error) {
-    console.error('❌ Database seeding failed:', error);
-    throw error;
-  }
-}
-
-// Function to reset database (for development)
-export async function resetDatabase() {
-  console.log('🔄 Resetting database...');
-  
-  try {
-    // Clear all data (in correct order due to foreign keys)
-    await db.delete(routeStops);
-    await db.delete(buses);
-    await db.delete(busRoutes);
-    await db.delete(busStops);
-    await db.delete(busCompanies);
-    
-    console.log('✅ Database reset completed');
-    return { success: true, message: 'Database reset successfully' };
-  } catch (error) {
-    console.error('❌ Database reset failed:', error);
-    throw error;
+    console.error('❌ Error seeding database:', error);
+    return false;
   }
 }

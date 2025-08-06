@@ -2,49 +2,37 @@ import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
 
-// Supabase connection configuration
-const connectionString = process.env.DATABASE_URL;
+// Get DATABASE_URL from environment
+const databaseUrl = process.env.DATABASE_URL;
 
-if (!connectionString) {
-  throw new Error(
-    'DATABASE_URL is not defined. Please provide your Supabase database URL.\n' +
-    'Get it from: Supabase Dashboard → Project → Settings → Database → Connection string (Transaction pooler)\n' +
-    'Format: postgresql://[user]:[password]@[host]:[port]/[database]'
-  );
+if (!databaseUrl) {
+  throw new Error('DATABASE_URL environment variable is required');
 }
 
-// Create the connection
-const client = postgres(connectionString, {
-  prepare: false,
-  max: 10,
+// Create PostgreSQL connection
+const connection = postgres(databaseUrl, {
+  ssl: 'require',
+  max: 20,
   idle_timeout: 20,
-  connect_timeout: 30,
-  ssl: 'require'
+  connect_timeout: 60,
 });
 
-// Create Drizzle instance
-export const db = drizzle(client, { schema });
+// Create Drizzle database instance
+export const db = drizzle(connection, { schema });
 
-// Connection health check
+// Health check function
 export async function checkDatabaseConnection() {
   try {
-    await client`SELECT 1 as health_check`;
-    console.log('✅ Database connection successful');
-    return { success: true, message: 'Connected to Supabase' };
+    await connection`SELECT 1`;
+    console.log('✅ Supabase database connected successfully');
+    return true;
   } catch (error) {
     console.error('❌ Database connection failed:', error);
-    return { success: false, error: error.message };
+    return false;
   }
 }
 
-// Graceful shutdown
+// Close database connection
 export async function closeDatabaseConnection() {
-  try {
-    await client.end();
-    console.log('📝 Database connection closed');
-  } catch (error) {
-    console.error('Error closing database connection:', error);
-  }
+  await connection.end();
 }
-
-export default db;
