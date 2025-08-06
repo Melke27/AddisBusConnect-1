@@ -1,10 +1,10 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { registerRoutes } from "./routes.js";
+import { setupVite, serveStatic, log } from "./vite.js";
 import session from 'express-session';
 import passport from 'passport';
-import './oauth'; // Initialize OAuth strategies
-import authRoutes from './routes/auth.routes';
+import './oauth.js'; // Initialize OAuth strategies
+import authRoutes from './routes/auth.routes.js';
 
 const app = express();
 

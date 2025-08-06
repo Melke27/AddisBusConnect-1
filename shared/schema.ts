@@ -207,8 +207,9 @@ export const resetPasswordSchema = z.object({
   password: z.string().min(6),
 });
 
-// Validation Schemas
-export const insertUserSchema = z.object({
+// Validation Schemas for OAuth user creation
+export const oauthUserSchema = z.object({
+  id: z.string(),
   email: z.string().email().optional(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
@@ -258,7 +259,7 @@ export const insertTicketSchema = z.object({
   amount: z.number().positive(),
 });
 
-// User Schema
+// User Schema - for regular user creation
 export const insertUserSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
@@ -272,7 +273,8 @@ export const insertUserSchema = z.object({
 });
 
 // Types
-export type UpsertUser = z.infer<typeof insertUserSchema> & { id?: string };
+export type UpsertUser = z.infer<typeof oauthUserSchema>;
+export type InsertUser = z.infer<typeof insertUserSchema>;
 export type InsertRoute = z.infer<typeof insertRouteSchema>;
 export type InsertStop = z.infer<typeof insertStopSchema>;
 export type InsertBus = z.infer<typeof insertBusSchema>;

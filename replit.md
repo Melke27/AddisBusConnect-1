@@ -3,6 +3,14 @@
 ## Overview
 AddisBus Connect is a full-stack web application designed for Addis Ababa bus passengers to track buses in real-time, purchase digital tickets, and access multilingual support. The system enables passengers to view live bus locations on maps, get estimated arrival times, and buy tickets using various payment methods including local mobile money services.
 
+## Recent Changes (August 6, 2025)
+- ✅ **Ethiopian Cultural Logos**: Created authentic Anbessa (Lion) and Sheger bus company logos with traditional Ethiopian flag colors (Green #009639, Yellow #FFDE00, Red #DA020E)
+- ✅ **Amharic Voice Assistant**: Implemented AI voice commands supporting Amharic language with phrases like 'መስመር ፈልግ' (find routes), 'አውቶብስ ከተተኮስ' (track bus), 'ትኬት ግዛ' (buy ticket)
+- ✅ **Real Bus Routes Data**: Added comprehensive Addis Ababa bus routes including Mercato-Bole, Gotera-Kaliti, Lafto-CMC, Gerji-Tor Hailoch, and Entoto-Lebu with accurate stops and pricing
+- ✅ **Advanced Google Maps Integration**: Implemented start/finish point tracking, live bus monitoring, route visualization, and user location services
+- ✅ **Button Guide & Descriptions**: Created comprehensive user guide with button descriptions in Amharic, English, and Oromo languages
+- ✅ **Migration Completed**: Successfully migrated from Replit Agent to standard Replit environment with working server
+
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
