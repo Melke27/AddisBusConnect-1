@@ -15,7 +15,7 @@ export default function ResetPasswordForm() {
   const { toast } = useToast();
   
   // Get token from URL params
-  const urlParams = new URLSearchParams(location.split('?')[1]);
+  const urlParams = new URLSearchParams(window.location.search);
   const token = urlParams.get('token');
   
   const [formData, setFormData] = useState({

@@ -381,13 +381,98 @@ app.get('/api/buses/live', async (req, res) => {
   }
 });
 
-// Purchase ticket
+// Purchase ticket with enhanced payment processing
 app.post('/api/tickets/purchase', async (req, res) => {
   try {
-    const { routeId, fromStopId, toStopId, paymentMethod, amount, userId } = req.body;
+    const { routeId, fromStopId, toStopId, paymentMethod, amount, userId, phoneNumber, cardDetails } = req.body;
     
-    // Generate QR code
-    const qrCode = `QR-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+    if (!paymentMethod) {
+      return res.status(400).json({ success: false, error: 'Payment method is required' });
+    }
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ success: false, error: 'Valid amount is required' });
+    }
+
+    // Validate payment method requirements
+    const mobilePaymentMethods = ['telebirr', 'cbe', 'awashBank', 'bankOfAbyssinia', 'cooperativeBank', 'helloMoney', 'mpesa'];
+    
+    if (mobilePaymentMethods.includes(paymentMethod) && !phoneNumber) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Phone number is required for mobile banking and wallet payments' 
+      });
+    }
+
+    if (paymentMethod === 'card' && !cardDetails) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Card details are required for card payments' 
+      });
+    }
+
+    // Validate Ethiopian phone number format if provided
+    if (phoneNumber) {
+      const ethiopianPhoneRegex = /^(\+251|0)[79]\d{8}$/;
+      if (!ethiopianPhoneRegex.test(phoneNumber)) {
+        return res.status(400).json({ 
+          success: false, 
+          error: 'Invalid Ethiopian phone number format. Use +251XXXXXXXXX or 09XXXXXXXX' 
+        });
+      }
+    }
+
+    // Simulate payment processing with different success rates
+    const paymentSuccessRates = {
+      telebirr: 0.95,
+      cbe: 0.88,
+      awashBank: 0.85,
+      bankOfAbyssinia: 0.82,
+      cooperativeBank: 0.78,
+      helloMoney: 0.92,
+      mpesa: 0.96,
+      card: 0.89
+    };
+
+    const successRate = paymentSuccessRates[paymentMethod] || 0.8;
+    const isPaymentSuccessful = Math.random() < successRate;
+
+    // Simulate processing delay
+    const processingDelays = {
+      telebirr: 2000,
+      cbe: 3000,
+      awashBank: 3500,
+      bankOfAbyssinia: 3200,
+      cooperativeBank: 3800,
+      helloMoney: 2500,
+      mpesa: 1800,
+      card: 4000
+    };
+
+    await new Promise(resolve => setTimeout(resolve, processingDelays[paymentMethod] || 3000));
+
+    if (!isPaymentSuccessful) {
+      const errorMessages = {
+        telebirr: 'TeleBirr payment failed - በቴሌብር ክፍያ አልተሳካም',
+        cbe: 'CBE Mobile Banking payment failed - በሲቢኢ ሞባይል ባንኪንግ ክፍያ አልተሳካም',
+        awashBank: 'Awash Bank Mobile payment failed',
+        bankOfAbyssinia: 'Bank of Abyssinia Mobile payment failed',
+        cooperativeBank: 'Cooperative Bank Mobile payment failed',
+        helloMoney: 'Hello Money payment failed',
+        mpesa: 'M-Pesa payment failed',
+        card: 'Card payment was declined'
+      };
+
+      return res.status(400).json({
+        success: false,
+        error: errorMessages[paymentMethod] || 'Payment failed',
+        paymentStatus: 'failed'
+      });
+    }
+    
+    // Generate QR code and transaction ID
+    const transactionId = `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+    const qrCode = `${paymentMethod.toUpperCase()}-${transactionId}`;
     
     const ticket = {
       id: `ticket-${Date.now()}`,
@@ -395,24 +480,44 @@ app.post('/api/tickets/purchase', async (req, res) => {
       routeId,
       fromStopId: fromStopId || null,
       toStopId: toStopId || null,
-      qrCode,
+      qrCodeData: qrCode,
       amount: parseFloat(amount),
       paymentMethod,
-      paymentId: `PAY-${Date.now()}`,
+      paymentId: transactionId,
+      paymentStatus: 'paid',
       status: 'active',
+      purchaseTime: new Date().toISOString(),
       validFrom: new Date().toISOString(),
       validUntil: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
       createdAt: new Date().toISOString()
     };
 
+    // Localized success messages
+    const successMessages = {
+      telebirr: 'TeleBirr payment successful - በቴሌብር በተሳካ ሁኔታ ተከፍሏል',
+      cbe: 'CBE Mobile Banking payment successful - በሲቢኢ ሞባይል ባንኪንግ በተሳካ ሁኔታ ተከፍሏል',
+      awashBank: 'Awash Bank Mobile payment successful - በአዋሽ ባንክ ሞባይል በተሳካ ሁኔታ ተከፍሏል',
+      bankOfAbyssinia: 'Bank of Abyssinia Mobile payment successful',
+      cooperativeBank: 'Cooperative Bank Mobile payment successful',
+      helloMoney: 'Hello Money payment successful',
+      mpesa: 'M-Pesa payment successful',
+      card: 'Card payment processed successfully'
+    };
+
     res.json({
       success: true,
       ticket,
-      message: 'Ticket purchased successfully - ትኬት በተሳካ ሁኔታ ተገዝቷል'
+      transactionId,
+      paymentStatus: 'paid',
+      message: successMessages[paymentMethod] || 'Ticket purchased successfully - ትኬት በተሳካ ሁኔታ ተገዝቷል'
     });
   } catch (error) {
     console.error('Error purchasing ticket:', error);
-    res.status(500).json({ success: false, error: 'Failed to purchase ticket' });
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to purchase ticket',
+      paymentStatus: 'failed'
+    });
   }
 });
 

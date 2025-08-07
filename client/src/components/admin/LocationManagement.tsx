@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, MapPin, Plus, Search, Trash2, Edit } from 'lucide-react';
-import type { Stop } from '@shared/schema';
+
+interface Stop {
+  _id: string;
+  nameEn: string;
+  nameAm: string;
+  nameOm: string;
+  latitude: number;
+  longitude: number;
+}
 
 interface LocationFormData {
   nameEn: string;

@@ -71,19 +71,43 @@ export default function TicketPurchase({ route, onBack }: TicketPurchaseProps) {
       id: 'telebirr',
       name: t('payment.telebirr'),
       icon: <Smartphone className="h-5 w-5" />,
-      color: 'bg-orange-500'
+      color: 'bg-orange-500',
+      description: 'Ethiopia\'s leading mobile money service'
     },
     {
       id: 'cbe',
       name: t('payment.cbe'),
       icon: <Building2 className="h-5 w-5" />,
-      color: 'bg-blue-600'
+      color: 'bg-blue-600',
+      description: 'Commercial Bank of Ethiopia Mobile Banking'
+    },
+    {
+      id: 'awashBank',
+      name: t('payment.awashBank'),
+      icon: <Building2 className="h-5 w-5" />,
+      color: 'bg-purple-600',
+      description: 'Awash Bank Mobile Banking'
+    },
+    {
+      id: 'bankOfAbyssinia',
+      name: t('payment.bankOfAbyssinia'),
+      icon: <Building2 className="h-5 w-5" />,
+      color: 'bg-red-600',
+      description: 'Bank of Abyssinia Mobile Banking'
+    },
+    {
+      id: 'helloMoney',
+      name: t('payment.helloMoney'),
+      icon: <Smartphone className="h-5 w-5" />,
+      color: 'bg-yellow-500',
+      description: 'Hello Money Mobile Wallet'
     },
     {
       id: 'card',
       name: t('payment.card'),
       icon: <CreditCard className="h-5 w-5" />,
-      color: 'bg-green-600'
+      color: 'bg-green-600',
+      description: 'Credit or Debit Card'
     }
   ];
 

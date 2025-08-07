@@ -149,7 +149,7 @@ export interface ITicket extends Document {
   validUntil: Date;
   qrCodeData: string;
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
-  paymentMethod?: 'telebirr' | 'cbe' | 'card' | 'hellocash';
+  paymentMethod?: 'telebirr' | 'cbe' | 'card' | 'hellocash' | 'awashBank' | 'bankOfAbyssinia' | 'cooperativeBank' | 'helloMoney' | 'mpesa';
   amount: number;
   createdAt: Date;
 }
@@ -162,7 +162,7 @@ const ticketSchema = new Schema<ITicket>({
   validUntil: { type: Date, required: true },
   qrCodeData: { type: String, required: true },
   paymentStatus: { type: String, enum: ['pending', 'paid', 'failed', 'refunded'], default: 'pending' },
-  paymentMethod: { type: String, enum: ['telebirr', 'cbe', 'card', 'hellocash'] },
+  paymentMethod: { type: String, enum: ['telebirr', 'cbe', 'card', 'hellocash', 'awashBank', 'bankOfAbyssinia', 'cooperativeBank', 'helloMoney', 'mpesa'] },
   amount: { type: Number, required: true },
 }, { timestamps: true });
 
@@ -255,7 +255,7 @@ export const insertTicketSchema = z.object({
   validUntil: z.date(),
   qrCodeData: z.string(),
   paymentStatus: z.enum(['pending', 'paid', 'failed', 'refunded']).optional(),
-  paymentMethod: z.enum(['telebirr', 'cbe', 'card', 'hellocash']).optional(),
+  paymentMethod: z.enum(['telebirr', 'cbe', 'card', 'hellocash', 'awashBank', 'bankOfAbyssinia', 'cooperativeBank', 'helloMoney', 'mpesa']).optional(),
   amount: z.number().positive(),
 });
 

@@ -96,18 +96,6 @@
     "viewReports": "View Reports",
     "viewReportsDesc": "Generate and view system reports"
   },
-  "routes": {
-    "title": "Bus Routes",
-    "searchPlaceholder": "Search routes...",
-    "noRoutes": "No routes found",
-    "viewDetails": "View Details",
-    "buyTicket": "Buy Ticket",
-    "schedule": "Schedule",
-    "price": "Price",
-    "frequency": "Frequency",
-    "active": "Active",
-    "inactive": "Inactive"
-  },
   "schedule": {
     "title": "Bus Schedule",
     "today": "Today",
@@ -151,6 +139,72 @@
     "confirmNewPassword": "Confirm New Password",
     "profileUpdated": "Profile updated successfully",
     "passwordChanged": "Password changed successfully"
+  },
+  "search": {
+    "title": "Find Your Bus",
+    "subtitle": "Track buses in real-time and buy digital tickets",
+    "from": "From",
+    "to": "To",
+    "fromPlaceholder": "Enter starting location",
+    "toPlaceholder": "Enter destination",
+    "searchButton": "Search"
+  },
+  "quickActions": {
+    "nearbyStops": "Nearby Stops",
+    "myTickets": "My Tickets",
+    "liveMap": "Live Map",
+    "schedules": "Schedules"
+  },
+  "routes": {
+    "popular": "Popular Routes",
+    "next": "Next",
+    "minutes": "minute",
+    "every": "Every",
+    "minutesShort": "minutes"
+  },
+  "liveTracking": {
+    "title": "Live Bus Tracking",
+    "live": "LIVE",
+    "myLocation": "My Location",
+    "traffic": "Traffic",
+    "fullScreen": "Full Screen"
+  },
+  "ticket": {
+    "purchase": "Buy Ticket",
+    "paymentMethod": "Payment Method",
+    "purchaseButton": "Buy Ticket",
+    "yourTicket": "Your Digital Ticket",
+    "route": "Route",
+    "ticketId": "Ticket ID",
+    "date": "Date",
+    "validUntil": "Valid Until",
+    "showQR": "Show this QR code when boarding",
+    "download": "Download",
+    "share": "Share",
+    "estimated": "Estimated"
+  },
+  "payment": {
+    "telebirr": "TeleBirr",
+    "cbe": "CBE Mobile Banking",
+    "card": "Credit/Debit Card",
+    "awashBank": "Awash Mobile Banking",
+    "bankOfAbyssinia": "Bank of Abyssinia Mobile",
+    "cooperativeBank": "Cooperative Bank Mobile",
+    "helloMoney": "Hello Money",
+    "mpesa": "M-Pesa",
+    "selectPaymentMethod": "Select Payment Method",
+    "mobileWallet": "Mobile Wallet",
+    "mobileBanking": "Mobile Banking",
+    "cardPayment": "Card Payment",
+    "enterPhoneNumber": "Enter your phone number",
+    "enterCardDetails": "Enter card details",
+    "processingPayment": "Processing payment...",
+    "paymentSuccessful": "Payment successful!",
+    "paymentFailed": "Payment failed. Please try again.",
+    "insufficientFunds": "Insufficient funds",
+    "invalidCard": "Invalid card details",
+    "transactionCancelled": "Transaction cancelled",
+    "networkError": "Network error. Please try again."
   },
   "common": {
     "loading": "Loading...",
@@ -308,6 +362,7 @@
     "september": "September",
     "october": "October",
     "november": "November",
-    "december": "December"
+    "december": "December",
+    "etb": "ETB"
   }
 }

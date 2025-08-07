@@ -51,8 +51,26 @@
   },
   "payment": {
     "telebirr": "Telebirr",
-    "cbe": "CBE Birr",
-    "card": "Kaardii"
+    "cbe": "CBE Moobaayila Bankii",
+    "card": "Kaardii Kiireediitii/Deebiitii",
+    "awashBank": "Awash Moobaayila Bankii",
+    "bankOfAbyssinia": "Baankii Habeeshaa Moobaayila",
+    "cooperativeBank": "Baankii Tumsa Moobaayila",
+    "helloMoney": "Hello Money",
+    "mpesa": "M-Pesa",
+    "selectPaymentMethod": "Mala Kafaltii Filadhu",
+    "mobileWallet": "Moobaayila Wallet",
+    "mobileBanking": "Moobaayila Banking",
+    "cardPayment": "Kafaltii Kaardii",
+    "enterPhoneNumber": "Lakkoofsa bilbilaa galchi",
+    "enterCardDetails": "Bal'ina kaardii galchi",
+    "processingPayment": "Kafaltii hojjetamaa jira...",
+    "paymentSuccessful": "Kafaltiin milkaa'eera!",
+    "paymentFailed": "Kafaltiin kufe. Maaloo ammas yaali.",
+    "insufficientFunds": "Maallaqni gahaa miti",
+    "invalidCard": "Bal'inni kaardii sirrii miti",
+    "transactionCancelled": "Daldalaan haqame",
+    "networkError": "Rakkoo networkii. Maaloo ammas yaali."
   },
   "admin": {
     "dashboard": "Gabatee Bulchaa",

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Router, Link, useLocation, Switch, Redirect } from 'wouter';
-import { MapPin, Bus, CreditCard, Settings, HelpCircle, Home } from 'lucide-react';
+import { Route, Router, Link, useLocation } from 'wouter';
+import { MapPin, Bus, CreditCard, Settings, HelpCircle, Home, User, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card';
 import { Button } from './components/ui/button';
 import { Badge } from './components/ui/badge';
@@ -8,12 +8,12 @@ import { AnbessaLogo, ShegerLogo, AddisBusLogo } from './components/ui/logos';
 import VoiceAssistant from './components/voice-assistant';
 import AdvancedMap from './components/maps/advanced-map';
 import ButtonGuide from './components/features/button-guide';
+import NewFeatures from './pages/NewFeatures';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Auth from './pages/Auth';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { useAuth } from './hooks/use-auth';
-import { busRoutes } from './data/routes';
 import './App.css';
 
 // Home Page Component
@@ -287,7 +287,7 @@ const Navigation: React.FC = () => {
   const { isAuthenticated } = useAuth();
   
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-around items-center py-2">
           <Link href="/">
@@ -331,6 +331,12 @@ const Navigation: React.FC = () => {
               </Button>
             </Link>
           )}
+          <Link href="/features">
+            <Button variant={location === '/features' ? 'default' : 'ghost'} size="sm" className="flex flex-col gap-1 h-auto py-2">
+              <Sparkles size={18} />
+              <span className="text-xs">Features</span>
+            </Button>
+          </Link>
           <Link href="/help">
             <Button variant={location === '/help' ? 'default' : 'ghost'} size="sm" className="flex flex-col gap-1 h-auto py-2">
               <HelpCircle size={20} />
@@ -345,7 +351,6 @@ const Navigation: React.FC = () => {
 
 // Main App Component
 const App: React.FC = () => {
-  const { isAuthenticated } = useAuth();
 
   return (
     <Router>
@@ -361,16 +366,68 @@ const App: React.FC = () => {
           <Dashboard />
         </ProtectedRoute>
         <Route path="/map">
-          <div className="min-h-screen bg-gray-50 pb-16">
-            <div className="container mx-auto px-4 py-4">
-              <AdvancedMap className="w-full" />
+          <div className="bg-gray-50 pb-16">
+            <div className="container mx-auto px-2 py-2">
+              <AdvancedMap className="w-full h-[60vh] rounded-lg overflow-hidden shadow-lg" />
+              
+              {/* Quick Features Access */}
+              <Card className="mt-4 border-blue-200">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <Sparkles className="w-5 h-5 mr-2 text-blue-600" />
+                    ተጨማሪ ባህሪያት - Quick Features
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <Button variant="outline" size="sm" onClick={() => window.location.href = '/features'} className="text-xs">
+                      🎤 Voice Assistant
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => window.location.href = '/features'} className="text-xs">
+                      🚌 Live Tracking
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => window.location.href = '/features'} className="text-xs">
+                      🌱 Carbon Tracker
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => window.location.href = '/features'} className="text-xs">
+                      🆘 Emergency
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </Route>
         <Route path="/live">
-          <div className="min-h-screen bg-gray-50 pb-16">
-            <div className="container mx-auto px-4 py-4">
-              <AdvancedMap className="w-full" />
+          <div className="bg-gray-50 pb-16">
+            <div className="container mx-auto px-2 py-2">
+              <AdvancedMap className="w-full h-[60vh] rounded-lg overflow-hidden shadow-lg" />
+              
+              {/* Live Bus Info */}
+              <Card className="mt-4 border-green-200">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <Bus className="w-5 h-5 mr-2 text-green-600" />
+                    ቀጥታ የአውቶብስ መረጃ - Live Bus Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="text-center p-3 bg-green-50 rounded">
+                      <div className="font-bold text-green-800">8</div>
+                      <div className="text-sm text-green-600">Active Buses</div>
+                    </div>
+                    <div className="text-center p-3 bg-blue-50 rounded">
+                      <div className="font-bold text-blue-800">4</div>
+                      <div className="text-sm text-blue-600">Routes Online</div>
+                    </div>
+                    <div className="text-center p-3 bg-orange-50 rounded">
+                      <div className="font-bold text-orange-800">~5 min</div>
+                      <div className="text-sm text-orange-600">Avg Wait Time</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </Route>
@@ -384,6 +441,11 @@ const App: React.FC = () => {
                 <p>Ticket purchasing feature coming soon with Telebirr, CBE Birr, and card payment integration.</p>
               </CardContent>
             </Card>
+          </div>
+        </Route>
+        <Route path="/features">
+          <div className="min-h-screen bg-gray-50 pb-20">
+            <NewFeatures />
           </div>
         </Route>
         <Route path="/help">

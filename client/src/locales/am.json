@@ -138,8 +138,26 @@
   },
   "payment": {
     "telebirr": "ቴሌ ብር",
-    "cbe": "ሲቢኢ ብር",
-    "card": "ካርድ"
+    "cbe": "ሲቢኢ ሞባይል ባንኪንግ",
+    "card": "ክሬዲት/ዴቢት ካርድ",
+    "awashBank": "አዋሽ ሞባይል ባንኪንግ",
+    "bankOfAbyssinia": "የአቢሲኒያ ባንክ ሞባይል",
+    "cooperativeBank": "ህብረት ሣህም ኩባንያ ሞባይል",
+    "helloMoney": "ሄሎ ማኒ",
+    "mpesa": "ኤም-ፔሳ",
+    "selectPaymentMethod": "የክፍያ ዘዴ ይምረጡ",
+    "mobileWallet": "ሞባይል ዋሌት",
+    "mobileBanking": "ሞባይል ባንኪንግ",
+    "cardPayment": "ካርድ ክፍያ",
+    "enterPhoneNumber": "ስልክ ቁጥር ያስገቡ",
+    "enterCardDetails": "የካርድ ዝርዝሮች ያስገቡ",
+    "processingPayment": "ክፍያ በሂደት ላይ...",
+    "paymentSuccessful": "ክፍያ በተሳካ ሁኔታ ተከናውኗል!",
+    "paymentFailed": "ክፍያ አልተሳካም። እባክዎ እንደገና ይሞክሩ።",
+    "insufficientFunds": "በቂ ገንዘብ የለም",
+    "invalidCard": "ልክ ያልሆኑ የካርድ ዝርዝሮች",
+    "transactionCancelled": "ግብይት ተሰርዟል",
+    "networkError": "የኔትወርክ ችግር። እባክዎ እንደገና ይሞክሩ።"
   },
   "admin": {
     "dashboard": "የአስተዳዳሪ ዳሽቦርድ",

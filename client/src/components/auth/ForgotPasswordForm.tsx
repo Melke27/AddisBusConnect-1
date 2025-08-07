@@ -44,13 +44,13 @@ export default function ForgotPasswordForm({ onSwitchToLogin }: ForgotPasswordFo
 
       setIsSuccess(true);
       toast({
-        title: t('auth.resetEmailSent'),
-        description: t('auth.checkEmail'),
+        title: t('auth.resetEmailSent') as string,
+        description: t('auth.checkEmail') as string,
       });
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to send reset email');
       toast({
-        title: t('auth.resetEmailError'),
+        title: t('auth.resetEmailError') as string,
         description: error instanceof Error ? error.message : 'Failed to send reset email',
         variant: 'destructive',
       });
@@ -142,7 +142,7 @@ export default function ForgotPasswordForm({ onSwitchToLogin }: ForgotPasswordFo
                   id="email"
                   name="email"
                   type="email"
-                  placeholder={t('auth.emailPlaceholder')}
+                  placeholder={t('auth.emailPlaceholder') as string}
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
@@ -159,7 +159,7 @@ export default function ForgotPasswordForm({ onSwitchToLogin }: ForgotPasswordFo
               className="w-full"
               disabled={isLoading}
             >
-              {isLoading ? t('auth.sendingEmail') : t('auth.sendResetEmail')}
+              {isLoading ? (t('auth.sendingEmail') as string) : (t('auth.sendResetEmail') as string)}
             </Button>
 
             <div className="text-center text-sm">

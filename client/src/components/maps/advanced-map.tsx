@@ -180,11 +180,10 @@ export const AdvancedMap: React.FC<AdvancedMapProps> = ({
   const deg2rad = (deg: number): number => deg * (Math.PI / 180);
 
   return (
-    <div className={`advanced-map-container ${className}`}>
-      {/* Voice Assistant */}
+    <div className={`relative w-full ${className} bg-white rounded-lg overflow-hidden`}>
+      {/* Voice Assistant - Smaller positioning */}
       <VoiceAssistant 
-        ref={voiceRef}
-        className="absolute top-4 left-4 z-1000"
+        className="absolute top-2 left-2 z-[100]"
         onCommand={(command) => {
           if (command.includes('መስመር ፈልግ')) {
             setTrackingMode('route');
@@ -194,10 +193,10 @@ export const AdvancedMap: React.FC<AdvancedMapProps> = ({
         }}
       />
 
-      {/* Control Panel */}
-      <Card className="absolute top-4 right-4 z-1000 w-80 bg-white/95 backdrop-blur">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-bold text-center">
+      {/* Control Panel - Smaller and repositioned */}
+      <Card className="absolute top-2 right-2 z-[100] w-64 bg-white/95 backdrop-blur shadow-lg">
+        <CardHeader className="pb-2 px-3 py-2">
+          <CardTitle className="text-sm font-bold text-center">
             🇪🇹 AddisBus Connect 🚌
           </CardTitle>
         </CardHeader>
