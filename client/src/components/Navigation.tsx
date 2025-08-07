@@ -12,6 +12,13 @@ export default function Navigation() {
   const { t } = useLanguage();
   const [location] = useLocation();
 
+  // Debug logging to check user and admin status
+  if (isAuthenticated) {
+    console.log('User data:', user);
+    console.log('Is admin:', isAdmin);
+    console.log('User role:', user?.role);
+  }
+
   const isActive = (path: string) => location === path;
 
   const handleLogout = () => {
@@ -68,6 +75,12 @@ export default function Navigation() {
                         <Button variant="ghost" className={`flex items-center space-x-2 ${isActive('/') ? 'bg-white/10' : 'hover:bg-white/5'}`}>
                           <Home className="h-5 w-5" />
                           <span>Home</span>
+                        </Button>
+                      </Link>
+                      <Link href="/admin">
+                        <Button variant="ghost" className={`flex items-center space-x-2 ${isActive('/admin') ? 'bg-white/10' : 'hover:bg-white/5'}`}>
+                          <Shield className="h-5 w-5" />
+                          <span>Admin</span>
                         </Button>
                       </Link>
                       <Link href="/live-tracking">

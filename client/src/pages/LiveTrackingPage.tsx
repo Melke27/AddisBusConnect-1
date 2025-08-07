@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import GoogleMapsComponent from '@/components/GoogleMapsComponent';
+import EnhancedLiveMap from '@/components/EnhancedLiveMap';
 import RouteSearch from '@/components/RouteSearch';
 import { Button } from '@/components/ui/button';
-import { Search, MapPin, Bus, Clock, Users } from 'lucide-react';
+import { Search, MapPin, Bus, Clock, Users, Map, X } from 'lucide-react';
 
 export default function LiveTrackingPage() {
-  const [activeTab, setActiveTab] = useState('map');
+  const [activeTab, setActiveTab] = useState('routes');
+  const [showMap, setShowMap] = useState(false);
   
   // Mock data for demonstration
   const popularRoutes = [
@@ -37,7 +38,26 @@ export default function LiveTrackingPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Live Bus Tracking</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Live Bus Tracking</h1>
+        <Button 
+          variant={showMap ? "outline" : "default"} 
+          onClick={() => setShowMap(!showMap)}
+          className="flex items-center gap-2"
+        >
+          {showMap ? (
+            <>
+              <X className="h-4 w-4" />
+              <span>Hide Map</span>
+            </>
+          ) : (
+            <>
+              <Map className="h-4 w-4" />
+              <span>Show Map</span>
+            </>
+          )}
+        </Button>
+      </div>
       
       <div className="mb-6">
         <RouteSearch 
@@ -61,20 +81,49 @@ export default function LiveTrackingPage() {
         )}
       </div>
 
+      {showMap && (
+        <div className="mb-6 rounded-lg border overflow-hidden shadow-sm">
+          <EnhancedLiveMap />
+        </div>
+      )}
+
       <Tabs 
-        defaultValue="map" 
-        className="w-full"
-        onValueChange={setActiveTab}
+        value={activeTab}
+        onValueChange={setShowMap ? (value) => {
+          setActiveTab(value);
+          if (value === 'map') setShowMap(true);
+        } : setActiveTab}
+        className="w-full flex flex-col h-full"
       >
-        <TabsList className="grid w-full grid-cols-3 max-w-md mb-6">
-          <TabsTrigger value="map">Map View</TabsTrigger>
-          <TabsTrigger value="routes">Routes</TabsTrigger>
-          <TabsTrigger value="stops">Nearby Stops</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 max-w-md mb-4">
+          <TabsTrigger 
+            value="map" 
+            className="flex items-center gap-2"
+            onClick={() => setShowMap(true)}
+          >
+            <MapPin className="h-4 w-4" />
+            <span>Map View</span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="routes" 
+            className="flex items-center gap-2"
+          >
+            <Bus className="h-4 w-4" />
+            <span>Routes</span>
+          </TabsTrigger>
+          <TabsTrigger 
+            value="stops" 
+            className="flex items-center gap-2"
+          >
+            <MapPin className="h-4 w-4" />
+            <span>Nearby Stops</span>
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="map">
-          <div className="h-[600px] rounded-lg overflow-hidden border">
-            <GoogleMapsComponent center={mapCenter} />
+        <TabsContent value="map" className="flex-1 flex flex-col min-h-0">
+          <div className="text-center py-8 text-gray-500">
+            <Map className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+            <p>Map is currently {showMap ? 'visible' : 'hidden'}. Use the toggle above to {showMap ? 'hide' : 'show'} it.</p>
           </div>
         </TabsContent>
 

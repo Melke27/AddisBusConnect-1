@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Router, Link, useLocation } from 'wouter';
+import { Route, Router, Link, useLocation, Switch, Redirect } from 'wouter';
 import { MapPin, Bus, CreditCard, Settings, HelpCircle, Home } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card';
 import { Button } from './components/ui/button';
@@ -9,6 +9,10 @@ import VoiceAssistant from './components/voice-assistant';
 import AdvancedMap from './components/maps/advanced-map';
 import ButtonGuide from './components/features/button-guide';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import Auth from './pages/Auth';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { useAuth } from './hooks/use-auth';
 import { busRoutes } from './data/routes';
 import './App.css';
 
@@ -25,6 +29,11 @@ const HomePage: React.FC = () => {
       { id: 2, type: 'ticket', message: 'ትኬት ተገዝቷል - 8.50 ብር', time: '15 ደቂቃ በፊት' },
       { id: 3, type: 'voice', message: 'የድምጽ ትእዛዝ ጥቅም ላይ ውሏል', time: '30 ደቂቃ በፊት' }
     ]);
+
+    // Play welcome audio when component mounts
+    const audio = new Audio('/audio/welcome_amharic.wav');
+    audio.play().catch(e => console.error('Error playing welcome audio:', e));
+
   }, []);
 
   const handleVoiceCommand = (command: string) => {
@@ -246,9 +255,11 @@ const HomePage: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle>
-              {selectedLanguage === 'am' ? 'የቅርብ ጊዜ እንቅስቃሴ' : 
-               selectedLanguage === 'om' ? 'Socha\'iinsa Yeroo Dhiyoo' : 
-               'Recent Activity'}
+              {selectedLanguage === 'am' 
+                ? 'የቅርብ ጊዜ እንቅስቃሴ' 
+                : selectedLanguage === 'om' 
+                  ? 'Socha\'iinsa Yeroo Dhiyoo' 
+                  : 'Recent Activity'}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -273,6 +284,7 @@ const HomePage: React.FC = () => {
 // Navigation Component
 const Navigation: React.FC = () => {
   const [location] = useLocation();
+  const { isAuthenticated } = useAuth();
   
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
@@ -296,18 +308,29 @@ const Navigation: React.FC = () => {
               <span className="text-xs">ክትትል</span>
             </Button>
           </Link>
-          <Link href="/tickets">
-            <Button variant={location === '/tickets' ? 'default' : 'ghost'} size="sm" className="flex flex-col gap-1 h-auto py-2">
-              <CreditCard size={20} />
-              <span className="text-xs">ትኬት</span>
-            </Button>
-          </Link>
-          <Link href="/dashboard">
-            <Button variant={location === '/dashboard' ? 'default' : 'ghost'} size="sm" className="flex flex-col gap-1 h-auto py-2">
-              <Settings size={20} />
-              <span className="text-xs">ዳሽቦርድ</span>
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link href="/tickets">
+                <Button variant={location === '/tickets' ? 'default' : 'ghost'} size="sm" className="flex flex-col gap-1 h-auto py-2">
+                  <CreditCard size={20} />
+                  <span className="text-xs">ትኬት</span>
+                </Button>
+              </Link>
+              <Link href="/dashboard">
+                <Button variant={location === '/dashboard' ? 'default' : 'ghost'} size="sm" className="flex flex-col gap-1 h-auto py-2">
+                  <Settings size={20} />
+                  <span className="text-xs">ዳሽቦርድ</span>
+                </Button>
+              </Link>
+            </>
+          ) : (
+            <Link href="/auth">
+              <Button variant={location === '/auth' ? 'default' : 'ghost'} size="sm" className="flex flex-col gap-1 h-auto py-2">
+                <User size={20} />
+                <span className="text-xs">ግባ/ይመዝገቡ</span>
+              </Button>
+            </Link>
+          )}
           <Link href="/help">
             <Button variant={location === '/help' ? 'default' : 'ghost'} size="sm" className="flex flex-col gap-1 h-auto py-2">
               <HelpCircle size={20} />
@@ -322,12 +345,21 @@ const Navigation: React.FC = () => {
 
 // Main App Component
 const App: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <Router>
       <div className="app-container">
         {/* Routes */}
         <Route path="/" component={HomePage} />
-        <Route path="/dashboard" component={Dashboard} />
+        
+        {/* Auth Routes */}
+        <Route path="/auth" component={Auth} />
+        
+        {/* Protected Routes */}
+        <ProtectedRoute path="/dashboard">
+          <Dashboard />
+        </ProtectedRoute>
         <Route path="/map">
           <div className="min-h-screen bg-gray-50 pb-16">
             <div className="container mx-auto px-4 py-4">
@@ -360,6 +392,15 @@ const App: React.FC = () => {
           </div>
         </Route>
         
+        {/* Admin Dashboard */}
+        <Route path="/admin">
+          <ProtectedRoute requireAdmin>
+            <div className="min-h-screen bg-gray-50 pb-16">
+              <AdminDashboard onBack={() => window.history.back()} />
+            </div>
+          </ProtectedRoute>
+        </Route>
+        
         {/* Navigation */}
         <Navigation />
       </div>
@@ -368,3 +409,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Eye, EyeOff, Mail, Lock, User, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface SignupFormProps {
   onSwitchToLogin: () => void;
@@ -17,6 +18,8 @@ interface SignupFormProps {
 export default function SignupForm({ onSwitchToLogin }: SignupFormProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { signup } = useAuth();
+  const [, setLocation] = useLocation();
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -28,7 +31,7 @@ export default function SignupForm({ onSwitchToLogin }: SignupFormProps) {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,60 +59,43 @@ export default function SignupForm({ onSwitchToLogin }: SignupFormProps) {
       setError('Passwords do not match');
       return false;
     }
-    return true;
+    return '';
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    // Validate form
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
       return;
     }
-
-    setIsLoading(true);
+    
+    setIsSubmitting(true);
     setError('');
 
     try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          password: formData.password,
-          preferredLanguage: formData.preferredLanguage
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Signup failed');
-      }
-
-      // Store token in localStorage
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
+      await signup(
+        `${formData.firstName} ${formData.lastName}`,
+        formData.email,
+        formData.password
+      );
+      
+      // Redirect to dashboard or previous page
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get('redirect') || '/dashboard';
+      setLocation(redirectTo);
+      
       toast({
         title: t('auth.signupSuccess'),
-        description: t('auth.accountCreated'),
+        description: t('auth.welcomeToApp'),
       });
-
-      // Redirect to home page
-      window.location.href = '/';
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Signup failed');
-      toast({
-        title: t('auth.signupError'),
-        description: error instanceof Error ? error.message : 'Signup failed',
-        variant: 'destructive',
-      });
+      console.error('Signup error:', error);
+      setError(error instanceof Error ? error.message : 'An error occurred during signup');
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -274,9 +260,19 @@ export default function SignupForm({ onSwitchToLogin }: SignupFormProps) {
             <Button
               type="submit"
               className="w-full"
-              disabled={isLoading}
+              disabled={isSubmitting}
             >
-              {isLoading ? t('auth.creatingAccount') : t('auth.signUp')}
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {t('auth.creatingAccount')}
+                </>
+              ) : (
+                t('auth.signUp')
+              )}
             </Button>
 
             <div className="text-center text-sm">

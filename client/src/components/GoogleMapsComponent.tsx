@@ -2,6 +2,7 @@ import { GoogleMap, Marker, Polyline, useLoadScript, Circle } from '@react-googl
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Loader2, Bus as BusIcon } from 'lucide-react';
 import { Bus, BusStop, Route, Coordinates } from '@/types';
+import axios from 'axios';
 
 interface GoogleMapsComponentProps {
   center?: {
@@ -31,69 +32,10 @@ const ROUTE_COLORS = [
   '#00BCD4', '#8BC34A', '#FFC107', '#E91E63', '#3F51B5'
 ];
 
-// Mock routes data - replace with real API calls
-const routes = useMemo<Route[]>(() => [
-  {
-    id: 'r1',
-    name: 'Meskel - Bole',
-    color: ROUTE_COLORS[0],
-    path: [
-      [9.0054, 38.7636],
-      [9.0154, 38.7736],
-      [9.0254, 38.7836],
-      [9.0354, 38.7936],
-    ],
-    stops: [
-      { id: 's1', name: 'Meskel Square', lat: 9.0054, lng: 38.7636, routes: ['r1'] },
-      { id: 's2', name: 'Bole Bridge', lat: 9.0254, lng: 38.7836, routes: ['r1', 'r2'] },
-      { id: 's3', name: 'Bole Medhanialem', lat: 9.0354, lng: 38.7936, routes: ['r1'] },
-    ]
-  },
-  {
-    id: 'r2',
-    name: 'Piassa - Mexico',
-    color: ROUTE_COLORS[1],
-    path: [
-      [9.0354, 38.7436],
-      [9.0254, 38.7536],
-      [9.0154, 38.7636],
-      [9.0054, 38.7736],
-    ],
-    stops: [
-      { id: 's4', name: 'Piassa', lat: 9.0354, lng: 38.7436, routes: ['r2'] },
-      { id: 's2', name: 'Bole Bridge', lat: 9.0254, lng: 38.7836, routes: ['r1', 'r2'] },
-      { id: 's5', name: 'Mexico Square', lat: 9.0054, lng: 38.7736, routes: ['r2'] },
-    ]
-  }
-], []);
-
-// Generate mock bus locations
-const generateMockBusLocations = (count: number): BusLocation[] => {
-  return Array.from({ length: count }, (_, i) => {
-    const route = routes[i % routes.length];
-    const pathIndex = Math.floor(Math.random() * (route.path.length - 1));
-    const [lat, lng] = route.path[pathIndex];
-    const nextStop = route.stops[Math.min(pathIndex + 1, route.stops.length - 1)];
-    
-    return {
-      id: `bus-${i + 1}`,
-      routeId: route.id,
-      routeName: route.name,
-      routeColor: route.color,
-      lat: lat + (Math.random() * 0.005 - 0.0025),
-      lng: lng + (Math.random() * 0.005 - 0.0025),
-      bearing: Math.floor(Math.random() * 360),
-      nextStop: nextStop?.name || 'Terminal',
-      etaToNextStop: Math.floor(Math.random() * 15) + 1,
-      occupancy: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)] as 'low' | 'medium' | 'high',
-      lastUpdated: new Date().toISOString()
-    };
-  });
-};
-
 const GoogleMapsComponent = ({ center: propCenter }: GoogleMapsComponentProps) => {
-  const [selectedBus, setSelectedBus] = useState<BusLocation | null>(null);
+  const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
   const [buses, setBuses] = useState<Bus[]>([]);
+  const [routes, setRoutes] = useState<Route[]>([]);
   const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -104,12 +46,29 @@ const GoogleMapsComponent = ({ center: propCenter }: GoogleMapsComponentProps) =
     libraries: ['places']
   });
 
-  // Initialize bus locations
+  // Fetch bus and route data
   useEffect(() => {
-    if (isLoaded) {
-      setBuses(generateMockBusLocations(8));
-      setIsLoading(false);
-    }
+    if (!isLoaded) return;
+
+    const fetchBusData = async () => {
+      try {
+        const [busRes, routeRes] = await Promise.all([
+          axios.get('/api/live-bus-locations'),
+          axios.get('/api/live-routes')
+        ]);
+        setBuses(busRes.data);
+        setRoutes(routeRes.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching bus data:', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchBusData();
+
+    const interval = setInterval(fetchBusData, 5000); // Refresh every 5 seconds
+    return () => clearInterval(interval);
   }, [isLoaded]);
 
   // Get user's current location
@@ -132,52 +91,6 @@ const GoogleMapsComponent = ({ center: propCenter }: GoogleMapsComponentProps) =
       );
     }
   }, [isLoaded]);
-
-  // Update bus positions every 5 seconds (simulated)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setBuses(prevBuses =>
-        prevBuses.map(bus => {
-          // Simple simulation - move bus along its route
-          const route = routes.find(r => r.id === bus.routeId);
-          if (!route || !route.path || route.path.length === 0) return bus;
-
-          // Find current position index in the path
-          const currentPos = route.path.findIndex(
-            (point) =>
-              point.lat === bus.lat &&
-              point.lng === bus.lng
-          );
-
-          // If not found, start from the beginning
-          const currentPositionIndex = currentPos === -1 ? 0 : currentPos;
-          
-          // Move to next point or loop back to start
-          const nextIndex = (currentPositionIndex + 1) % route.path.length;
-          const nextPoint = route.path[nextIndex];
-
-          // Calculate bearing for bus direction
-          const prevIndex = currentPositionIndex === 0 ? route.path.length - 1 : currentPositionIndex - 1;
-          const prevPoint = route.path[prevIndex];
-          
-          const bearing = Math.atan2(
-            nextPoint[1] - prevPoint[1],
-            nextPoint[0] - prevPoint[0]
-          ) * (180 / Math.PI);
-
-          return {
-            ...bus,
-            lat: nextPoint[0],
-            lng: nextPoint[1],
-            bearing,
-            lastUpdated: new Date().toISOString(),
-          };
-        })
-      );
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [routes]);
 
   // Create bus icon with rotation
   const getBusIcon = (color: string, bearing: number) => {
@@ -243,7 +156,7 @@ const GoogleMapsComponent = ({ center: propCenter }: GoogleMapsComponentProps) =
         {routes.map((route) => (
           <Polyline
             key={route.id}
-            path={route.path.map(([lat, lng]) => ({ lat, lng }))}
+            path={route.path.map((point) => ({ lat: point.lat, lng: point.lng }))}
             options={{
               strokeColor: route.color,
               strokeOpacity: 0.7,
@@ -359,3 +272,5 @@ const GoogleMapsComponent = ({ center: propCenter }: GoogleMapsComponentProps) =
 };
 
 export default GoogleMapsComponent;
+
+

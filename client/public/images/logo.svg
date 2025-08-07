@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background rectangle with gradient -->
+  <rect width="200" height="60" rx="10" fill="url(#paint0_linear)"/>
+  
+  <!-- Bus icon -->
+  <path d="M30 20H50V40H30V20Z" fill="white"/>
+  <path d="M50 25H60V35H50V25Z" fill="white"/>
+  <circle cx="40" cy="45" r="5" fill="#2D3748"/>
+  <circle cx="40" cy="45" r="2" fill="white"/>
+  
+  <!-- Text -->
+  <text x="70" y="35" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white">AddisBus</text>
+  <text x="70" y="50" font-family="Arial, sans-serif" font-size="16" fill="#E2E8F0">Connect</text>
+  
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="paint0_linear" x1="0" y1="0" x2="200" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3182CE"/>
+      <stop offset="1" stop-color="#2B6CB0"/>
+    </linearGradient>
+  </defs>
+</svg>

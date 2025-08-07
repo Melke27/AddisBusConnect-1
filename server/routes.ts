@@ -1,4 +1,5 @@
 import type { Express } from "express";
+import { getBusLocations, getRoutes } from "./simulatedBusData";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
@@ -317,6 +318,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Client disconnected from WebSocket');
     });
   });
+
+  // Live Bus Data API
+  app.get("/api/live-bus-locations", getBusLocations);
+  app.get("/api/live-routes", getRoutes);
 
   return server;
 }

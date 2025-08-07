@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Eye, EyeOff, Mail, Lock, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface LoginFormProps {
   onSwitchToSignup: () => void;
@@ -17,13 +18,15 @@ interface LoginFormProps {
 export default function LoginForm({ onSwitchToSignup, onSwitchToForgotPassword }: LoginFormProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { login } = useAuth();
+  const [, setLocation] = useLocation();
   
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,44 +40,26 @@ export default function LoginForm({ onSwitchToSignup, onSwitchToForgotPassword }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setIsSubmitting(true);
     setError('');
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
-
-      // Store token in localStorage
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
+      await login(formData.email, formData.password);
+      
+      // Redirect to dashboard or previous page
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get('redirect') || '/dashboard';
+      setLocation(redirectTo);
+      
       toast({
         title: t('auth.loginSuccess'),
         description: t('auth.welcomeBack'),
       });
-
-      // Redirect to home page
-      window.location.href = '/';
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Login failed');
-      toast({
-        title: t('auth.loginError'),
-        description: error instanceof Error ? error.message : 'Login failed',
-        variant: 'destructive',
-      });
+      console.error('Login error:', error);
+      setError(error instanceof Error ? error.message : 'An error occurred during login');
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 

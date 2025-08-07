@@ -1,0 +1,19 @@
+{
+  "allRoutes": "Comprehensive Bus Network",
+  "redLine": "Red Line - Central Corridor",
+  "yellowLine": "Yellow Line - Eastern District",
+  "greenLine": "Green Line - Western District",
+  "startingPoint": "Commencement Point",
+  "destination": "Final Destination",
+  "onTime": "On Schedule",
+  "delayed": "Service Disruption",
+  "cancelled": "Service Suspended",
+  "stops": "Designated Stops",
+  "viewDetails": "View Route Details",
+  "route1Name": "Central Express - Red Line",
+  "route2Name": "Eastern Connector - Yellow Line",
+  "route3Name": "Western Loop - Green Line",
+  "routeDescription1": "Connecting major commercial hubs and government offices",
+  "routeDescription2": "Serving educational institutions and residential areas",
+  "routeDescription3": "Linking business districts with residential communities"
+}

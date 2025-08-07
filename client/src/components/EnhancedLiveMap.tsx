@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Loader2 } from 'lucide-react';
+import { Card, CardHeader, CardContent, CardTitle } from './ui/card';
 
 // Fix for default marker icons in Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -48,39 +49,27 @@ const ROUTE_COLORS = [
   '#00BCD4', '#8BC34A', '#FFC107', '#E91E63', '#3F51B5'
 ];
 
-// Mock routes data
+// Mock data for routes
 const mockRoutes: Route[] = [
   {
-    id: 'r1',
-    name: 'Meskel - Bole',
+    id: 'route-1',
+    name: 'Mercato - Bole',
     color: ROUTE_COLORS[0],
-    path: [
-      [9.0054, 38.7636],
-      [9.0154, 38.7736],
-      [9.0254, 38.7836],
-      [9.0354, 38.7936],
-    ],
     stops: [
-      { id: 's1', name: 'Meskel Square', lat: 9.0054, lng: 38.7636, routes: ['r1'] },
-      { id: 's2', name: 'Bole Bridge', lat: 9.0254, lng: 38.7836, routes: ['r1', 'r2'] },
-      { id: 's3', name: 'Bole Medhanialem', lat: 9.0354, lng: 38.7936, routes: ['r1'] },
-    ]
+      { id: 'stop-1', name: 'Mercato', lat: 9.0054, lng: 38.7636, routes: ['route-1'] },
+      { id: 'stop-2', name: 'Bole', lat: 9.0254, lng: 38.7836, routes: ['route-1'] }
+    ],
+    path: [[9.0054, 38.7636], [9.0154, 38.7736], [9.0254, 38.7836]]
   },
   {
-    id: 'r2',
-    name: 'Piassa - Mexico',
+    id: 'route-2',
+    name: 'Meskel - Bole',
     color: ROUTE_COLORS[1],
-    path: [
-      [9.0354, 38.7436],
-      [9.0254, 38.7536],
-      [9.0154, 38.7636],
-      [9.0054, 38.7736],
-    ],
     stops: [
-      { id: 's4', name: 'Piassa', lat: 9.0354, lng: 38.7436, routes: ['r2'] },
-      { id: 's2', name: 'Bole Bridge', lat: 9.0254, lng: 38.7836, routes: ['r1', 'r2'] },
-      { id: 's5', name: 'Mexico Square', lat: 9.0054, lng: 38.7736, routes: ['r2'] },
-    ]
+      { id: 'stop-3', name: 'Meskel Square', lat: 9.0054, lng: 38.7636, routes: ['route-2'] },
+      { id: 'stop-4', name: 'Bole Bridge', lat: 9.0254, lng: 38.7836, routes: ['route-2'] }
+    ],
+    path: [[9.0054, 38.7636], [9.0154, 38.7736], [9.0254, 38.7836]]
   }
 ];
 
@@ -107,9 +96,6 @@ const generateMockBusLocations = (count: number): BusLocation[] => {
     };
   });
 };
-
-// Initialize mock bus locations
-const mockBusLocations = generateMockBusLocations(10);
 
 // Custom bus icon with rotation
 const createBusIcon = (color: string, bearing: number) => {
@@ -144,49 +130,78 @@ const createBusIcon = (color: string, bearing: number) => {
   });
 };
 
-export default function EnhancedLiveMap() {
-  const mapRef = useRef<L.Map | null>(null);
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [selectedBus, setSelectedBus] = useState<BusLocation | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+const EnhancedLiveMap: React.FC = () => {
+  // State
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [busLocations, setBusLocations] = useState<BusLocation[]>(mockBusLocations);
+  const [selectedBus, setSelectedBus] = useState<BusLocation | null>(null);
+  
+  // Refs
+  const mapRef = useRef<L.Map | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
   const busMarkers = useRef<{ [key: string]: L.Marker }>({});
   const routeLayers = useRef<{ [key: string]: L.Polyline }>({});
   const stopMarkers = useRef<{ [key: string]: L.Marker }>({});
   const updateInterval = useRef<NodeJS.Timeout>();
-  const allStops = Array.from(new Set(mockRoutes.flatMap(route => route.stops)));
-
+  
+  // Bus locations state
+  const [busLocations, setBusLocations] = useState<BusLocation[]>([]);
+  
   // Initialize map
   useEffect(() => {
-    if (mapRef.current) return;
-
+    if (!mapContainerRef.current || mapRef.current) return;
+    
+    // Initialize map with default coordinates (Addis Ababa)
     const defaultCoords: [number, number] = [9.0054, 38.7636];
-    const map = L.map('map', {
+    const map = L.map(mapContainerRef.current, {
       zoomControl: false,
       preferCanvas: true
     }).setView(defaultCoords, 13);
     
-    // Add tile layer
+    // Add OpenStreetMap tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: 'OpenStreetMap contributors'
+      attribution: '© OpenStreetMap contributors'
     }).addTo(map);
     
-    // Add zoom control
-    L.control.zoom({ position: 'topright' }).addTo(map);
-    
+    // Store map reference
     mapRef.current = map;
-
-    // Add route polylines
+    
+    // Set up map layers and markers
+    setupMapLayers(map);
+    
+    // Initial load of bus locations
+    refreshBusLocations();
+    
+    // Set up auto-refresh for bus locations
+    updateInterval.current = setInterval(() => {
+      refreshBusLocations();
+    }, 15000); // Refresh every 15 seconds
+    
+    // Clean up on unmount
+    return () => {
+      if (updateInterval.current) {
+        clearInterval(updateInterval.current);
+      }
+      if (map) {
+        map.remove();
+      }
+    };
+  }, []);
+  
+  // Set up map layers (routes and stops)
+  const setupMapLayers = (map: L.Map) => {
+    // Add routes to map
     mockRoutes.forEach(route => {
-      const polyline = L.polyline(route.path, {
+      // Skip if route layer already exists
+      if (routeLayers.current[route.id]) return;
+      
+      const routeLayer = L.polyline(route.path, {
         color: route.color,
         weight: 4,
-        opacity: 0.7,
-        lineJoin: 'round'
+        opacity: 0.7
       }).addTo(map);
       
-      routeLayers.current[route.id] = polyline;
+      routeLayers.current[route.id] = routeLayer;
       
       // Add route label
       if (route.path.length > 0) {
@@ -208,284 +223,187 @@ export default function EnhancedLiveMap() {
           })
         }).addTo(map);
       }
-    });
-    
-    // Add bus stop markers
-    allStops.forEach(stop => {
-      const marker = L.marker([stop.lat, stop.lng], {
-        icon: L.divIcon({
-          className: 'bus-stop',
-          html: '🚏',
-          iconSize: [24, 24],
-          iconAnchor: [12, 24]
-        })
-      }).addTo(map);
       
-      // Add popup with stop info
-      const popupContent = `
-        <div class="p-2">
-          <h3 class="font-bold">${stop.name}</h3>
-          <p class="text-sm">Routes: ${stop.routes.map(r => 
-            `<span class="inline-block w-3 h-3 rounded-full mr-1" 
-                  style="background: ${mockRoutes.find(rt => rt.id === r)?.color || '#ccc'}"></span>${r}`
-          ).join(', ')}</p>
-        </div>
-      `;
-      
-      marker.bindPopup(popupContent);
-      stopMarkers.current[stop.id] = marker;
-    });
-    
-    // Add bus markers
-    busLocations.forEach(bus => {
-      const marker = L.marker([bus.lat, bus.lng], {
-        icon: createBusIcon(bus.routeColor, bus.bearing),
-        zIndexOffset: 1000
-      }).addTo(map);
-      
-      // Add popup with bus info
-      const popupContent = `
-        <div class="p-2 w-48">
-          <div class="flex items-center mb-1">
-            <span class="inline-block w-3 h-3 rounded-full mr-2" 
-                  style="background: ${bus.routeColor}"></span>
-            <h3 class="font-bold">${bus.routeName}</h3>
-          </div>
-          <p class="text-sm">Bus #${bus.id.split('-')[1]}</p>
-          <p class="text-xs">Next: ${bus.nextStop} (${bus.etaToNextStop} min)</p>
-          <div class="mt-1 flex items-center">
-            <span class="text-xs">Occupancy: </span>
-            <div class="ml-1 flex">
-              ${['low', 'medium', 'high'].map((level, i) => 
-                `<div class="w-2 h-2 mx-px rounded-full ${i < ['low', 'medium', 'high'].indexOf(bus.occupancy) + 1 ? 'bg-gray-700' : 'bg-gray-300'}"></div>`
-              ).join('')}
+      // Add stops to map
+      route.stops.forEach(stop => {
+        if (!stopMarkers.current[stop.id]) {
+          const stopMarker = L.marker([stop.lat, stop.lng], {
+            icon: L.divIcon({
+              className: 'bus-stop-marker',
+              html: '🚏',
+              iconSize: [24, 24],
+              iconAnchor: [12, 12]
+            })
+          }).bindPopup(`
+            <div class="p-2">
+              <h4 class="font-bold">${stop.name}</h4>
+              <p>Routes: ${stop.routes.join(', ')}</p>
             </div>
-          </div>
-        </div>
-      `;
-      
-      marker.bindPopup(popupContent);
-      marker.on('click', () => setSelectedBus(bus));
-      busMarkers.current[bus.id] = marker;
+          `).addTo(map);
+          
+          stopMarkers.current[stop.id] = stopMarker;
+        }
+      });
+    });
+  };
+  
+  // Refresh bus locations (mock implementation)
+  const refreshBusLocations = () => {
+    if (!mapRef.current) return;
+    
+    // In a real app, this would be an API call
+    const updatedLocations = generateMockBusLocations(10);
+    setBusLocations(updatedLocations);
+    setLastUpdated(new Date());
+    
+    // Update or add bus markers
+    updatedLocations.forEach(bus => {
+      if (!busMarkers.current[bus.id]) {
+        // Create new marker if it doesn't exist
+        const icon = createBusIcon(bus.routeColor, bus.bearing);
+        const marker = L.marker([bus.lat, bus.lng], { icon })
+          .addTo(mapRef.current!)
+          .bindPopup(`
+            <div class="p-2">
+              <h4 class="font-bold">${bus.routeName}</h4>
+              <p>Next stop: ${bus.nextStop}</p>
+              <p>ETA: ${bus.etaToNextStop} min</p>
+            </div>
+          `);
+        
+        busMarkers.current[bus.id] = marker;
+      } else {
+        // Update existing marker
+        const marker = busMarkers.current[bus.id];
+        marker.setLatLng([bus.lat, bus.lng]);
+        
+        // Update rotation if needed
+        if (marker.setRotationAngle) {
+          marker.setRotationAngle(bus.bearing);
+        }
+      }
     });
     
-    // Get user location
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const userLoc: [number, number] = [latitude, longitude];
-          setUserLocation(userLoc);
-          
-          // Add user location marker with a pulsing effect
-          const userMarker = L.circleMarker(userLoc, {
-            radius: 8,
-            fillColor: '#4285F4',
-            color: '#fff',
-            weight: 2,
-            opacity: 1,
-            fillOpacity: 0.8
-          }).addTo(map);
-          
-          // Center map on user with a slight offset
-          map.setView(userLoc, 15);
-        },
-        (error) => {
-          console.error('Error getting location:', error);
-          setIsLoading(false);
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    } else {
-      setIsLoading(false);
-    }
+    // Remove old markers that are no longer in the data
+    Object.keys(busMarkers.current).forEach(busId => {
+      if (!updatedLocations.some(bus => bus.id === busId)) {
+        mapRef.current?.removeLayer(busMarkers.current[busId]);
+        delete busMarkers.current[busId];
+      }
+    });
     
-    // Cleanup function
+    setIsLoading(false);
+  };
+  
+  // Handle map click to select a bus
+  const handleMapClick = (e: L.LeafletMouseEvent) => {
+    if (!mapRef.current) return;
+    
+    // Find if a bus was clicked
+    const clickedBus = busLocations.find(bus => {
+      const marker = busMarkers.current[bus.id];
+      if (!marker) return false;
+      
+      const point = mapRef.current?.latLngToContainerPoint(marker.getLatLng());
+      if (!point) return false;
+      
+      const clickPoint = mapRef.current?.latLngToContainerPoint(e.latlng);
+      if (!clickPoint) return false;
+      
+      // Simple distance check (in pixels)
+      const distance = point.distanceTo(clickPoint);
+      return distance < 20; // 20px tolerance
+    });
+    
+    setSelectedBus(clickedBus || null);
+  };
+  
+  // Set up map click handler
+  useEffect(() => {
+    if (!mapRef.current) return;
+    
+    mapRef.current.on('click', handleMapClick);
+    
     return () => {
       if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
-      if (updateInterval.current) {
-        clearInterval(updateInterval.current);
+        mapRef.current.off('click', handleMapClick);
       }
     };
-  }, []);
-
-  // Update bus positions periodically
-  useEffect(() => {
-    updateInterval.current = setInterval(() => {
-      setBusLocations(prevBuses => 
-        prevBuses.map(bus => {
-          const route = mockRoutes.find(r => r.id === bus.routeId);
-          if (!route) return bus;
-          
-          // Find current position in path
-          let closestIdx = 0;
-          let minDist = Infinity;
-          
-          route.path.forEach(([lat, lng], idx) => {
-            const dist = Math.sqrt(Math.pow(lat - bus.lat, 2) + Math.pow(lng - bus.lng, 2));
-            if (dist < minDist) {
-              minDist = dist;
-              closestIdx = idx;
-            }
-          });
-          
-          // Move to next point
-          const nextIdx = (closestIdx + 1) % route.path.length;
-          const [nextLat, nextLng] = route.path[nextIdx];
-          
-          // Calculate bearing (in degrees)
-          const y = Math.sin(nextLng - bus.lng) * Math.cos(nextLat);
-          const x = Math.cos(bus.lat) * Math.sin(nextLat) - 
-                    Math.sin(bus.lat) * Math.cos(nextLat) * Math.cos(nextLng - bus.lng);
-          let bearing = Math.atan2(y, x) * (180 / Math.PI);
-          
-          // Small random movement
-          const lat = bus.lat + (nextLat - bus.lat) * 0.1 + (Math.random() * 0.0005 - 0.00025);
-          const lng = bus.lng + (nextLng - bus.lng) * 0.1 + (Math.random() * 0.0005 - 0.00025);
-          
-          // Update marker if it exists
-          const marker = busMarkers.current[bus.id];
-          if (marker) {
-            marker.setLatLng([lat, lng]);
-            marker.setIcon(createBusIcon(bus.routeColor, bearing));
-          }
-          
-          return {
-            ...bus,
-            lat,
-            lng,
-            bearing,
-            lastUpdated: new Date().toISOString(),
-            nextStop: route.stops[nextIdx % route.stops.length]?.name || 'Terminal',
-            etaToNextStop: Math.max(0, (bus.etaToNextStop - 3) % 15) // Simple countdown
-          };
-        })
-      );
-      setLastUpdated(new Date());
-    }, 3000);
-    
-    return () => {
-      if (updateInterval.current) {
-        clearInterval(updateInterval.current);
-      }
-    };
-  }, []);
+  }, [busLocations]);
 
   return (
-    <div className="relative h-[600px] w-full rounded-lg overflow-hidden">
-      {isLoading ? (
-        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center z-10">
-          <div className="flex flex-col items-center">
+    <div className="relative w-full h-full flex flex-col">
+      {/* Map container */}
+      <div 
+        ref={mapContainerRef} 
+        className="w-full flex-1 min-h-[400px] bg-gray-100"
+        style={{ minHeight: '60vh' }}
+      ></div>
+      
+      {/* Loading overlay */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
+          <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
             <Loader2 className="h-8 w-8 text-blue-500 animate-spin mb-2" />
-            <p className="text-gray-600">Loading map...</p>
+            <p>Loading map data...</p>
           </div>
         </div>
-      ) : (
-        <div id="map" className="h-full w-full" />
       )}
       
-      {/* Bus details panel */}
-      {selectedBus && (
-        <div className="absolute top-4 right-4 w-64 bg-white rounded-lg shadow-lg overflow-hidden z-[1000]">
-          <div 
-            className="h-2 w-full"
-            style={{ backgroundColor: selectedBus.routeColor }}
-          ></div>
-          <div className="p-4">
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="font-bold text-lg">{selectedBus.routeName}</h3>
-              <button 
-                onClick={() => setSelectedBus(null)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                ✕
-              </button>
-            </div>
-            
-            <div className="flex items-center text-sm text-gray-600 mb-4">
-              <span className="inline-block w-2 h-2 rounded-full mr-2" 
-                    style={{ backgroundColor: selectedBus.routeColor }}></span>
-              Bus #{selectedBus.id.split('-')[1]}
-              <span className="mx-2">•</span>
-              <span className="flex items-center">
-                <span className={`inline-block w-2 h-2 rounded-full mr-1 ${
-                  selectedBus.occupancy === 'low' ? 'bg-green-500' : 
-                  selectedBus.occupancy === 'medium' ? 'bg-yellow-500' : 'bg-red-500'
-                }`}></span>
-                {selectedBus.occupancy.charAt(0).toUpperCase() + selectedBus.occupancy.slice(1)} occupancy
-              </span>
-            </div>
-            
-            <div className="space-y-3">
+      {/* Map controls */}
+      <div className="absolute top-4 right-4 z-10 space-y-2 flex flex-col items-end">
+        <button 
+          onClick={() => {
+            if (mapRef.current) {
+              mapRef.current.setView([9.0054, 38.7636], 13); // Reset to default view
+            }
+          }}
+          className="bg-white p-2 rounded-full shadow-lg hover:bg-gray-100"
+          title="Reset view"
+        >
+          🏠
+        </button>
+      </div>
+      
+      {/* Bus info card */}
+      <div className="absolute bottom-4 left-4 z-10 w-11/12 md:w-1/3">
+        <Card>
+          <CardHeader>
+            <CardTitle>🚌 Real-time Bus Tracking</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {selectedBus ? (
               <div>
-                <p className="text-xs text-gray-500">Next Stop</p>
-                <p className="font-medium">{selectedBus.nextStop || 'Terminal'}</p>
+                <div className="flex items-center mb-2">
+                  <div 
+                    className="w-3 h-3 rounded-full mr-2" 
+                    style={{ backgroundColor: selectedBus.routeColor }}
+                  ></div>
+                  <h3 className="font-bold text-lg">{selectedBus.routeName}</h3>
+                </div>
+                <p className="text-gray-700">
+                  <span className="font-medium">Next stop:</span> {selectedBus.nextStop}
+                </p>
+                <p className="text-gray-700">
+                  <span className="font-medium">ETA:</span> {selectedBus.etaToNextStop} min
+                </p>
+                <p className="text-sm text-gray-500 mt-2">
+                  Last updated: {lastUpdated?.toLocaleTimeString() || 'Just now'}
+                </p>
               </div>
-              
-              <div className="flex justify-between">
-                <div>
-                  <p className="text-xs text-gray-500">ETA</p>
-                  <p className="font-medium">{selectedBus.etaToNextStop} min</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500">Last Updated</p>
-                  <p className="font-medium">
-                    {lastUpdated ? new Date(selectedBus.lastUpdated).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '--:--'}
-                  </p>
-                </div>
+            ) : (
+              <div className="text-center py-4">
+                <p className="text-gray-600">Click on a bus to see details</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  {busLocations.length} buses in service
+                </p>
               </div>
-            </div>
-            
-            <button 
-              className="mt-4 w-full bg-blue-50 text-blue-600 py-2 rounded-md text-sm font-medium hover:bg-blue-100 transition-colors"
-              onClick={() => {
-                if (mapRef.current) {
-                  mapRef.current.flyTo([selectedBus.lat, selectedBus.lng], 16, {
-                    duration: 1
-                  });
-                }
-              }}
-            >
-              Track Bus
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-            <button 
-              onClick={() => userLocation && mapRef.current?.setView(userLocation, 15)}
-              className="bg-white p-2 rounded-full shadow-lg hover:bg-gray-100"
-              title="Center on my location"
-            >
-              📍
-            </button>
-          </div>
-        </div>
-        
-        <div className="w-full md:w-1/3 space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Real-time Bus Tracking</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {selectedBus ? (
-                <div>
-                  <h3 className="font-bold">{selectedBus.routeName}</h3>
-                  <p>Next stop: {selectedBus.nextStop}</p>
-                  <p>ETA: {selectedBus.etaToNextStop} min</p>
-                </div>
-              ) : (
-                <p>Select a bus to see details</p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
-}
+};
+
+export default React.memo(EnhancedLiveMap);
