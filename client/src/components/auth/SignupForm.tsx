@@ -101,8 +101,8 @@ export default function SignupForm({ onSwitchToLogin }: SignupFormProps) {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
+      <Card className="w-full max-w-md mx-auto">
+        <CardHeader className="space-y-2">
           <div className="flex items-center space-x-2">
             <Link href="/">
               <Button
@@ -117,24 +117,24 @@ export default function SignupForm({ onSwitchToLogin }: SignupFormProps) {
               {t('auth.signUp')}
             </CardTitle>
           </div>
-          <CardDescription>
+          <CardDescription className="text-sm">
             {t('auth.signupDescription')}
           </CardDescription>
         </CardHeader>
         
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
+                <AlertDescription className="text-sm">{error}</AlertDescription>
               </Alert>
             )}
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">{t('auth.firstName')}</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="firstName" className="text-sm font-medium">{t('auth.firstName')}</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     id="firstName"
                     name="firstName"
@@ -142,16 +142,16 @@ export default function SignupForm({ onSwitchToLogin }: SignupFormProps) {
                     placeholder={t('auth.firstNamePlaceholder')}
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    className="pl-10"
+                    className="pl-10 h-10 text-sm"
                     required
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="lastName">{t('auth.lastName')}</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="lastName" className="text-sm font-medium">{t('auth.lastName')}</Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
                     id="lastName"
                     name="lastName"
@@ -159,17 +159,17 @@ export default function SignupForm({ onSwitchToLogin }: SignupFormProps) {
                     placeholder={t('auth.lastNamePlaceholder')}
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    className="pl-10"
+                    className="pl-10 h-10 text-sm"
                     required
                   />
                 </div>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">{t('auth.email')}</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-sm font-medium">{t('auth.email')}</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   id="email"
                   name="email"
@@ -177,30 +177,32 @@ export default function SignupForm({ onSwitchToLogin }: SignupFormProps) {
                   placeholder={t('auth.emailPlaceholder')}
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="pl-10"
+                  className="pl-10 h-10 text-sm"
                   required
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="preferredLanguage">{t('auth.preferredLanguage')}</Label>
-              <Select value={formData.preferredLanguage} onValueChange={handleSelectChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t('auth.selectLanguage')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="am">አማርኛ (Amharic)</SelectItem>
-                  <SelectItem value="om">Afaan Oromoo (Oromo)</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="space-y-1.5">
+              <Label htmlFor="preferredLanguage" className="text-sm font-medium">{t('auth.preferredLanguage')}</Label>
+              <div className="relative">
+                <Select value={formData.preferredLanguage} onValueChange={handleSelectChange}>
+                  <SelectTrigger className="h-10 text-sm">
+                    <SelectValue placeholder={t('auth.selectLanguage')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="en" className="text-sm">English</SelectItem>
+                    <SelectItem value="am" className="text-sm">አማርኛ (Amharic)</SelectItem>
+                    <SelectItem value="om" className="text-sm">Afaan Oromoo (Oromo)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">{t('auth.password')}</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-sm font-medium">{t('auth.password')}</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   id="password"
                   name="password"
@@ -208,14 +210,14 @@ export default function SignupForm({ onSwitchToLogin }: SignupFormProps) {
                   placeholder={t('auth.passwordPlaceholder')}
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="pl-10 pr-10"
+                  className="pl-10 pr-10 h-10 text-sm"
                   required
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-muted-foreground"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
@@ -227,10 +229,10 @@ export default function SignupForm({ onSwitchToLogin }: SignupFormProps) {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">{t('auth.confirmPassword')}</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="confirmPassword" className="text-sm font-medium">{t('auth.confirmPassword')}</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -238,14 +240,14 @@ export default function SignupForm({ onSwitchToLogin }: SignupFormProps) {
                   placeholder={t('auth.confirmPasswordPlaceholder')}
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="pl-10 pr-10"
+                  className="pl-10 pr-10 h-10 text-sm"
                   required
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-muted-foreground"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (
@@ -259,7 +261,7 @@ export default function SignupForm({ onSwitchToLogin }: SignupFormProps) {
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full h-10 mt-2 text-sm font-medium"
               disabled={isSubmitting}
             >
               {isSubmitting ? (
@@ -275,12 +277,12 @@ export default function SignupForm({ onSwitchToLogin }: SignupFormProps) {
               )}
             </Button>
 
-            <div className="text-center text-sm">
+            <div className="text-center text-sm text-muted-foreground pt-2">
               {t('auth.alreadyHaveAccount')}{' '}
               <Button
                 type="button"
                 variant="link"
-                className="p-0 h-auto text-sm"
+                className="p-0 h-auto text-sm text-primary underline-offset-4 hover:underline"
                 onClick={onSwitchToLogin}
               >
                 {t('auth.login')}

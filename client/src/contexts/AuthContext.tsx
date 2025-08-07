@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useLocation } from 'wouter';
+import { api } from '@/lib/api';
 
 interface User {
   id: string;
@@ -28,16 +29,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/auth/me', {
-          credentials: 'include',
-        });
-        
-        if (response.ok) {
-          const userData = await response.json();
+        const token = localStorage.getItem('token');
+        if (token) {
+          const userData = await api.get('/api/auth/me');
           setUser(userData);
         }
       } catch (error) {
         console.error('Authentication check failed:', error);
+        // Clear invalid token
+        localStorage.removeItem('token');
       } finally {
         setIsLoading(false);
       }
@@ -49,21 +49,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Login failed');
-      }
-
-      const userData = await response.json();
+      const { user: userData, token } = await api.post('/api/auth/login', { email, password });
+      
+      // Store the token in localStorage
+      localStorage.setItem('token', token);
+      
+      // Update the user state
       setUser(userData);
-      setLocation('/dashboard');
+      
+      // Redirect to dashboard or previous page
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get('redirect') || '/dashboard';
+      setLocation(redirectTo);
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -75,19 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signup = async (name: string, email: string, password: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Signup failed');
-      }
-
-      const userData = await response.json();
+      const userData = await api.post('/api/auth/signup', { name, email, password });
       setUser(userData);
       setLocation('/dashboard');
     } catch (error) {
@@ -100,14 +85,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-      setUser(null);
-      setLocation('/');
+      await api.post('/api/auth/logout', {});
     } catch (error) {
       console.error('Logout error:', error);
+    } finally {
+      // Clear user data and token
+      setUser(null);
+      localStorage.removeItem('token');
+      setLocation('/login');
     }
   };
 

@@ -65,7 +65,7 @@ export default function LoginForm({ onSwitchToSignup, onSwitchToForgotPassword }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md mx-auto">
         <CardHeader className="space-y-1">
           <div className="flex items-center space-x-2">
             <Link href="/">
@@ -95,9 +95,9 @@ export default function LoginForm({ onSwitchToSignup, onSwitchToForgotPassword }
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">{t('auth.email')}</Label>
+              <Label htmlFor="email" className="block mb-1">{t('auth.email')}</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   id="email"
                   name="email"
@@ -105,16 +105,26 @@ export default function LoginForm({ onSwitchToSignup, onSwitchToForgotPassword }
                   placeholder={t('auth.emailPlaceholder')}
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="pl-10"
+                  className="pl-10 h-10"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">{t('auth.password')}</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="block mb-1">{t('auth.password')}</Label>
+                <Button
+                  type="button"
+                  variant="link"
+                  className="p-0 h-auto text-xs text-muted-foreground hover:text-primary"
+                  onClick={onSwitchToForgotPassword}
+                >
+                  {t('auth.forgotPassword')}
+                </Button>
+              </div>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   id="password"
                   name="password"
@@ -122,14 +132,14 @@ export default function LoginForm({ onSwitchToSignup, onSwitchToForgotPassword }
                   placeholder={t('auth.passwordPlaceholder')}
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="pl-10 pr-10"
+                  className="pl-10 pr-10 h-10"
                   required
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-muted-foreground"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
@@ -141,31 +151,30 @@ export default function LoginForm({ onSwitchToSignup, onSwitchToForgotPassword }
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <Button
-                type="button"
-                variant="link"
-                className="p-0 h-auto text-sm"
-                onClick={onSwitchToForgotPassword}
-              >
-                {t('auth.forgotPassword')}
-              </Button>
-            </div>
-
             <Button
               type="submit"
-              className="w-full"
-              disabled={isLoading}
+              className="w-full h-10 mt-6"
+              disabled={isSubmitting}
             >
-              {isLoading ? t('auth.loggingIn') : t('auth.login')}
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  {t('auth.loggingIn')}
+                </>
+              ) : (
+                t('auth.login')
+              )}
             </Button>
 
-            <div className="text-center text-sm">
+            <div className="text-center text-sm text-muted-foreground mt-4">
               {t('auth.noAccount')}{' '}
               <Button
                 type="button"
                 variant="link"
-                className="p-0 h-auto text-sm"
+                className="p-0 h-auto text-sm text-primary underline-offset-4 hover:underline"
                 onClick={onSwitchToSignup}
               >
                 {t('auth.signUp')}
